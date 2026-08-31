@@ -1,6 +1,6 @@
 /* ==========================================================================
    AI XSMB 2026 - OPTIMIZER MINI APP CORE LOGIC
-   (FORCE NO-CACHE FETCH & GUARANTEED DATE 01/09/2026)
+   (INTERACTIVE MODE SELECTOR TAB FOR NEXT DAY N1 / N2 / N3)
    ========================================================================== */
 
 // Embedded Default Data Fallback
@@ -34,6 +34,8 @@ let current20 = [39, 13, 22, 43, 45, 57, 68, 18, 61, 72, 54, 9, 25, 34, 63, 70, 
 let current3D = ['339', '443', '557', '225', '889', '770', '334', '993', '552', '884', '007', '775', '002', '220', '998', '448', '668', '113', '222', '338'];
 let current4D = ['1339', '2443', '3557', '4225', '5889', '6770', '7334', '8993', '9552', '0884', '1007', '2775', '3002', '4220', '5998', '6448', '7668', '8113', '9222', '0338'];
 
+let selectedNextDayMode = 'n1'; // 'n1', 'n2', or 'n3'
+
 // Date Labels for Schedule N1, N2, N3
 let n1DateStr = "Thứ Ba (01/09/2026)";
 let n2DateStr = "Thứ Tư (02/09/2026)";
@@ -47,6 +49,7 @@ const recent2Days = [72, 44];
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     initControls();
+    initModeSelector();
     loadData();
 });
 
@@ -82,7 +85,7 @@ async function loadData() {
     runOptimizerEngine();
 }
 
-// Compute N1, N2, N3 dates & Detect Frame Status (Always using highest STT)
+// Compute N1, N2, N3 dates & Detect Frame Status
 function computeDynamicDatesAndFrame() {
     if (!globalData || !globalData.history || globalData.history.length === 0) return;
     
@@ -91,7 +94,6 @@ function computeDynamicDatesAndFrame() {
     const lastRec = sortedHist[sortedHist.length - 1];
     const lastDateText = lastRec.date || 'Thứ hai ngày 31-08-2026';
 
-    // Extract date e.g. "Thứ hai ngày 31-08-2026"
     const match = lastDateText.match(/(\d{2})-(\d{2})-(\d{4})/);
     if (match) {
         const d = parseInt(match[1]);
@@ -127,7 +129,7 @@ function computeDynamicDatesAndFrame() {
             hdrStatus.innerHTML = `🎯 Trạng Thái: <strong class="text-emerald">ĐÃ NỔ N1 ➔ RESET KHUNG MỚI NGÀY ${fmtShort(dtN1)}</strong>`;
         }
 
-        // Force update ALL DOM Labels across all tabs explicitly
+        // Update ALL DOM Labels across all tabs explicitly
         setTxt('tab1-date-badge', `Cầu Mới: ${fmtShort(dtN1)}`);
         setTxt('m-n1-date', n1DateStr);
         setTxt('step1-n1-lbl', n1DateStr);
@@ -136,6 +138,9 @@ function computeDynamicDatesAndFrame() {
         setTxt('t2-n1-lbl', fmtShort(dtN1));
         setTxt('t2-n2-lbl', fmtShort(dtN2));
         setTxt('t2-n3-lbl', fmtShort(dtN3));
+
+        setTxt('next-tab-date-lbl', n1DateStr);
+        setTxt('selected-mode-date', n1DateStr);
 
         setTxt('chip-n1-date', fmtShort(dtN1));
         setTxt('chip-n2-date', fmtShort(dtN2));
@@ -175,6 +180,63 @@ function initTabs() {
             document.getElementById(target).classList.add('active');
         });
     });
+}
+
+// Mode Selector Cards on Tab 3
+function initModeSelector() {
+    ['mode-card-n1', 'mode-card-n2', 'mode-card-n3'].forEach(id => {
+        const card = document.getElementById(id);
+        if (card) {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedNextDayMode = card.dataset.mode;
+                renderSelectedModeGrid();
+            });
+        }
+    });
+
+    document.getElementById('btn-copy-selected-mode')?.addEventListener('click', copySelectedMode);
+    document.getElementById('btn-copy-mode-inner')?.addEventListener('click', copySelectedMode);
+}
+
+function renderSelectedModeGrid() {
+    const container = document.getElementById('grid-selected-mode-numbers');
+    const titleEl = document.getElementById('selected-mode-title');
+    if (!container) return;
+
+    let targetArr = currentOptimized60;
+    let label = 'Khung Mới N1 - 60 Số Gốc';
+
+    if (selectedNextDayMode === 'n2') {
+        targetArr = current36_N2;
+        label = 'Nối Khung N2 - 36 Số Siêu Lọc';
+    } else if (selectedNextDayMode === 'n3') {
+        targetArr = current36_N3;
+        label = 'Chốt Khung N3 - 36 Số Hỏa Lực';
+    }
+
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-fire text-amber"></i> Danh Sách Dàn Số Đã Chọn (${label})`;
+
+    container.innerHTML = targetArr.map(n => {
+        const str = String(n).padStart(2, '0');
+        return `<span class="num-pill top clickable-pill" data-copy="${str}">${str} <i class="fa-regular fa-copy" style="font-size:0.75rem; opacity:0.6;"></i></span>`;
+    }).join('');
+}
+
+function copySelectedMode() {
+    let targetArr = currentOptimized60;
+    let label = 'Dàn Khung Mới N1 (60 Số)';
+
+    if (selectedNextDayMode === 'n2') {
+        targetArr = current36_N2;
+        label = 'Dàn Nối Khung N2 (36 Số)';
+    } else if (selectedNextDayMode === 'n3') {
+        targetArr = current36_N3;
+        label = 'Dàn Chốt Khung N3 (36 Số)';
+    }
+
+    copyToClipboard(formatNumList(targetArr), `Đã sao chép ${label} cho ngày ${n1DateStr}!`);
 }
 
 // Controls & Copy Listeners
@@ -372,6 +434,7 @@ function runOptimizerEngine() {
     // Render Tab 2 Grids
     renderNumberGrid(currentOptimized60);
     renderLoweringGrids();
+    renderSelectedModeGrid();
 }
 
 // Render Tab 1 Live Preview Grid
@@ -448,7 +511,7 @@ function render3D4DGrids() {
     }
 }
 
-// Render Frame History Journal Table (Tab 3)
+// Render Frame History Journal Table (Tab 4)
 function renderFrameHistoryTable(data) {
     const tbody = document.getElementById('tbody-frame-history');
     if (!tbody || !data) return;
@@ -472,7 +535,7 @@ function renderFrameHistoryTable(data) {
     }).join('');
 }
 
-// Render Gaussian Top List (Tab 4)
+// Render Gaussian Top List (Tab 5)
 function renderGaussianList(list) {
     const container = document.getElementById('nhip-vang-container');
     if (!container || !list) return;
@@ -495,7 +558,7 @@ function renderGaussianList(list) {
     }).join('');
 }
 
-// Render History Table (Tab 5)
+// Render History Table (Tab 6)
 function renderHistoryTable(data) {
     const tbody = document.getElementById('tbody-history');
     if (!tbody || !data) return;

@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=4.0.2">
+    <link rel="stylesheet" href="styles.css?v=4.0.3">
 </head>
 <body>
     <div class="app-container">
@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <h1 class="brand-title">XSMB AI OPTIMIZER <span class="badge-v2">2026 v4.0</span></h1>
-                    <p class="brand-subtitle">Hệ Thống Tự Động Nhận Diện Chuyển Cầu Ngày Mới Khi Nổ Khung &amp; Dàn N2/N3 (36 Số Siêu Lọc)</p>
+                    <p class="brand-subtitle">Hệ Thống Tự Động Nhận Diện Chuyển Cầu &amp; Tùy Chọn Linh Hoạt Dàn Kế Tiếp N1/N2/N3</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -71,16 +71,19 @@
                 <i class="fa-solid fa-sliders"></i> Tab 1: Bộ Lọc Tối Ưu (<span class="badge-tab-date" id="tab1-date-badge">Cầu Mới: Thứ Ba 01/09</span>)
             </button>
             <button class="tab-btn" data-tab="tab-results">
-                <i class="fa-solid fa-fire"></i> Tab 2: Dàn 60s N1 - 36s N2 - 36s N3
+                <i class="fa-solid fa-fire"></i> Tab 2: 3 Tầng (60s N1 - 36s N2 - 36s N3)
+            </button>
+            <button class="tab-btn" data-tab="tab-next-day">
+                <i class="fa-solid fa-square-poll-vertical text-amber"></i> Tab 3: 🚀 Dàn Kế Tiếp &amp; Tùy Chọn N1/N2/N3
             </button>
             <button class="tab-btn" data-tab="tab-frame-history">
-                <i class="fa-solid fa-book-bookmark"></i> Tab 3: Nhật Ký Lịch Sử Các Khung 2026
+                <i class="fa-solid fa-book-bookmark"></i> Tab 4: Nhật Ký Khung 2026
             </button>
             <button class="tab-btn" data-tab="tab-analytics">
-                <i class="fa-solid fa-chart-line"></i> Tab 4: Phân Tích &amp; Win Rate
+                <i class="fa-solid fa-chart-line"></i> Tab 5: Phân Tích Win Rate
             </button>
             <button class="tab-btn" data-tab="tab-history">
-                <i class="fa-solid fa-database"></i> Tab 5: Lịch Sử Quay (239 Kỳ)
+                <i class="fa-solid fa-database"></i> Tab 6: Lịch Sử Quay (239 Kỳ)
             </button>
         </nav>
 
@@ -352,7 +355,72 @@
             </div>
         </section>
 
-        <!-- TAB 3: NHẬT KÝ LỊCH SỬ CÁC KHUNG (FRAME HISTORY LOG) -->
+        <!-- TAB 3 MỚI: DÀN KẾ TIẾP & TÙY CHỌN KHUNG N1 / N2 / N3 -->
+        <section id="tab-next-day" class="tab-content">
+            <div class="results-header glass">
+                <div>
+                    <h2><i class="fa-solid fa-sliders text-cyan"></i> Dàn Kế Tiếp Cho Ngày Tiếp Theo — Bảng Tùy Chọn Linh Hoạt (N1 / N2 / N3)</h2>
+                    <p>Ngày đánh tiếp theo: <strong class="text-emerald" id="next-tab-date-lbl">Thứ Ba (01/09/2026)</strong> — Chọn chế độ dàn số bạn muốn sử dụng:</p>
+                </div>
+                <div class="results-actions">
+                    <button class="btn btn-primary" id="btn-copy-selected-mode">
+                        <i class="fa-regular fa-copy"></i> Copy Dàn Đã Chọn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mode Selector Switches -->
+            <div class="mode-selector-grid grid-3" style="margin-top: 20px;">
+                <div class="mode-card glass active" id="mode-card-n1" data-mode="n1">
+                    <div class="mode-header">
+                        <span class="badge badge-success">LỰA CHỌN 1 (KHUYÊN DÙNG)</span>
+                        <h3>🎯 Đánh Khung Mới (N1)</h3>
+                    </div>
+                    <div class="mode-body">
+                        <div class="mode-size text-emerald">60 SỐ GỐC</div>
+                        <p class="mode-desc">Phù hợp khi kỳ trước đã nổ (Reset Khung Mới). Phủ rộng an toàn tối đa.</p>
+                    </div>
+                </div>
+
+                <div class="mode-card glass" id="mode-card-n2" data-mode="n2">
+                    <div class="mode-header">
+                        <span class="badge badge-purple">LỰA CHỌN 2</span>
+                        <h3>⚡ Đánh Nối Khung (N2)</h3>
+                    </div>
+                    <div class="mode-body">
+                        <div class="mode-size text-purple">36 SỐ SIÊU LỌC</div>
+                        <p class="mode-desc">Tối ưu mật độ AI nổ cao cho Ngày 2 khi N1 trượt hoặc muốn đánh tinh gọn.</p>
+                    </div>
+                </div>
+
+                <div class="mode-card glass" id="mode-card-n3" data-mode="n3">
+                    <div class="mode-header">
+                        <span class="badge badge-amber">LỰA CHỌN 3</span>
+                        <h3>🔥 Đánh Chốt Khung (N3)</h3>
+                    </div>
+                    <div class="mode-body">
+                        <div class="mode-size text-amber">36 SỐ HỎA LỰC</div>
+                        <p class="mode-desc">Tối ưu hỏa lực chốt khung Ngày 3 khi N1&amp;N2 chưa nổ hoặc muốn đánh vốn lớn.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Mode Visual Numbers Presentation -->
+            <div class="card glass" style="margin-top: 20px;">
+                <div class="card-header">
+                    <div>
+                        <h3 id="selected-mode-title"><i class="fa-solid fa-fire text-amber"></i> Danh Sách Dàn Số Đã Chọn (Khung Mới N1 - 60 Số)</h3>
+                        <span class="badge-date-tag text-emerald">🎯 ĐÁNH NGÀY HÔM SAU: <strong id="selected-mode-date">Thứ Ba (01/09/2026)</strong></span>
+                    </div>
+                    <button class="btn btn-sm btn-primary" id="btn-copy-mode-inner"><i class="fa-regular fa-copy"></i> Sao Chép Dàn Này</button>
+                </div>
+                <div class="number-tags-container" id="grid-selected-mode-numbers">
+                    <!-- Dynamic rendering by JS based on selected mode -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: NHẬT KÝ LỊCH SỬ CÁC KHUNG (FRAME HISTORY LOG) -->
         <section id="tab-frame-history" class="tab-content">
             <div class="card glass">
                 <div class="card-header">
@@ -388,7 +456,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: PHÂN TÍCH & WIN RATE -->
+        <!-- TAB 5: PHÂN TÍCH & WIN RATE -->
         <section id="tab-analytics" class="tab-content">
             <div class="analytics-grid">
                 <div class="card glass">
@@ -458,7 +526,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: LỊCH SỬ QUAY 2026 -->
+        <!-- TAB 6: LỊCH SỬ QUAY 2026 -->
         <section id="tab-history" class="tab-content">
             <div class="card glass">
                 <div class="card-header">
@@ -498,7 +566,7 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <p>© 2026 Antigravity AI Lab — XSMB 4-Step Dynamic Optimization System. Reverted to Optimized 36 Numbers for N2 &amp; N3.</p>
+            <p>© 2026 Antigravity AI Lab — XSMB 4-Step Dynamic Optimization System. Interactive Mode Selector N1/N2/N3 Tab Added.</p>
         </footer>
     </div>
 
@@ -508,6 +576,6 @@
         <span id="toast-msg">Đã sao chép dàn số!</span>
     </div>
 
-    <script src="app.js?v=4.0.2"></script>
+    <script src="app.js?v=4.0.3"></script>
 </body>
 </html>

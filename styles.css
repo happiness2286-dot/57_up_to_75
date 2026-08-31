@@ -751,6 +751,36 @@ body {
 .text-amber { color: var(--accent-amber); }
 .text-danger { color: var(--accent-rose); }
 
+/* Mode Card Selector */
+.mode-card {
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mode-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-indigo);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+}
+
+.mode-card.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.1));
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+}
+
+.mode-header { display: flex; flex-direction: column; gap: 6px; }
+.mode-header h3 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; }
+.mode-size { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; margin: 4px 0; }
+.mode-desc { font-size: 0.82rem; color: var(--text-secondary); }
+
 /* Footer */
 .main-footer {
     text-align: center;
