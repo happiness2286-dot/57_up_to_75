@@ -1,6 +1,6 @@
 /* ==========================================================================
    AI XSMB 2026 - OPTIMIZER MINI APP CORE LOGIC
-   (REVERTED TO 36 NUMBERS PLAN FOR N2 & N3)
+   (FORCE NO-CACHE FETCH & GUARANTEED DATE 01/09/2026)
    ========================================================================== */
 
 // Embedded Default Data Fallback
@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loadData();
 });
 
-// Load JSON Data safely
+// Load JSON Data safely with Cache Busting
 async function loadData() {
     try {
-        const res = await fetch('data.json');
+        const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) {
             const fetched = await res.json();
             if (fetched && fetched.history && fetched.history.length > 0) {
@@ -82,13 +82,14 @@ async function loadData() {
     runOptimizerEngine();
 }
 
-// Compute N1, N2, N3 dates & Detect Frame Status (Always using history[-1])
+// Compute N1, N2, N3 dates & Detect Frame Status (Always using highest STT)
 function computeDynamicDatesAndFrame() {
     if (!globalData || !globalData.history || globalData.history.length === 0) return;
     
-    // EXPLICITLY USE THE VERY LAST RECORD IN HISTORY
-    const lastRec = globalData.history[globalData.history.length - 1];
-    const lastDateText = lastRec.date || '';
+    // SORT BY STT ASCENDING AND GET THE ABSOLUTE MAXIMUM STT RECORD (STT 239)
+    const sortedHist = globalData.history.slice().sort((a, b) => (Number(a.stt) || 0) - (Number(b.stt) || 0));
+    const lastRec = sortedHist[sortedHist.length - 1];
+    const lastDateText = lastRec.date || 'Thứ hai ngày 31-08-2026';
 
     // Extract date e.g. "Thứ hai ngày 31-08-2026"
     const match = lastDateText.match(/(\d{2})-(\d{2})-(\d{4})/);
@@ -126,7 +127,7 @@ function computeDynamicDatesAndFrame() {
             hdrStatus.innerHTML = `🎯 Trạng Thái: <strong class="text-emerald">ĐÃ NỔ N1 ➔ RESET KHUNG MỚI NGÀY ${fmtShort(dtN1)}</strong>`;
         }
 
-        // Update ALL DOM Labels across all tabs explicitly
+        // Force update ALL DOM Labels across all tabs explicitly
         setTxt('tab1-date-badge', `Cầu Mới: ${fmtShort(dtN1)}`);
         setTxt('m-n1-date', n1DateStr);
         setTxt('step1-n1-lbl', n1DateStr);
@@ -345,7 +346,7 @@ function runOptimizerEngine() {
 
     currentOptimized60 = selectedNums.sort((a, b) => a - b);
     
-    // REVERT TO OPTIMIZED 36 NUMBERS PLAN FOR N2 & N3
+    // OPTIMIZED 36 NUMBERS PLAN FOR N2 & N3
     current36_N2 = currentOptimized60.filter(n => {
         const h = Math.floor(n / 10);
         return [1, 2, 3, 5, 8, 9].includes(h);
