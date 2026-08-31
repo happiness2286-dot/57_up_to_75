@@ -61,9 +61,17 @@ function initControls() {
     document.getElementById('btn-copy-20')?.addEventListener('click', () => copyToClipboard(current20.map(n => String(n).padStart(2, '0')).join(', '), 'Đã sao chép Dàn Hỏa Lực Top 20!'));
     document.getElementById('btn-download-txt')?.addEventListener('click', downloadTxtFile);
 
+    // Live Fetch Button
+    document.getElementById('btn-fetch-live')?.addEventListener('click', async () => {
+        showToast('Đang kết nối ketqua16.net và cập nhật dữ liệu...');
+        await loadData();
+        runOptimizerEngine();
+        setTimeout(() => showToast('Dữ liệu đã được cập nhật mới nhất!'), 1000);
+    });
+
     // GitHub Push
     document.getElementById('btn-export-git')?.addEventListener('click', () => {
-        showToast('Repository ready! Git commit & push commands prepared.');
+        showToast('Đang sẵn sàng Push! Hãy chạy file auto_push_daily.bat');
     });
 
     // History Search
