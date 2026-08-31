@@ -784,8 +784,149 @@ body {
 /* Footer */
 .main-footer {
     text-align: center;
-    font-size: 0.8rem;
+    padding: 24px 0 12px 0;
     color: var(--text-muted);
-    padding: 20px 0;
-    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 20px;
+}
+
+/* ==========================================================================
+   IPHONE & MOBILE RESPONSIVE STYLES (iOS Safari Optimized)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 8px 8px max(24px, env(safe-area-inset-bottom)) 8px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-container {
+        padding: 0;
+        gap: 12px;
+    }
+
+    /* Header Mobile */
+    .main-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .header-brand {
+        gap: 10px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .brand-title {
+        font-size: 1.2rem;
+    }
+
+    .brand-subtitle {
+        font-size: 0.78rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Dynamic Alert Box Mobile */
+    .frame-alert-box {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .alert-dates {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+
+    /* Mobile Navigation Tab Bar (Swipeable) */
+    .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 6px;
+        gap: 6px;
+        border-radius: var(--radius-md);
+        scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+
+    /* Grids Mobile */
+    .metrics-grid,
+    .optimizer-grid,
+    .grid-3,
+    .grid-2,
+    .analytics-grid,
+    .mode-selector-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* Number Grid 60 numbers on Mobile */
+    .number-grid {
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 6px;
+    }
+
+    .num-cell {
+        height: 46px;
+        font-size: 1.1rem;
+    }
+
+    /* Number Pills Container */
+    .number-tags-container {
+        gap: 6px;
+    }
+
+    .num-pill {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Table Mobile Responsive */
+    .table-responsive {
+        font-size: 0.82rem;
+    }
+
+    .data-table th, .data-table td {
+        padding: 8px 10px;
+    }
+
+    /* Toast for Mobile */
+    .toast {
+        bottom: max(20px, env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 360px;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
 }
