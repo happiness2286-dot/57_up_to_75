@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <h1 class="brand-title">XSMB AI OPTIMIZER <span class="badge-v2">2026 v4.0</span></h1>
-                    <p class="brand-subtitle">Hệ Thống Tối Ưu Dàn 60 Số N1 Bằng Thuật Toán AI 4 Bước</p>
+                    <p class="brand-subtitle">Hệ Thống Tối Ưu Dàn 60 Số N1 Bằng Thuật Toán AI 4 Bước (Interactive & Copy 1-Click)</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -42,16 +42,16 @@
         <!-- Navigation Tabs -->
         <nav class="nav-tabs">
             <button class="tab-btn active" data-tab="tab-optimizer">
-                <i class="fa-solid fa-sliders"></i> Bộ Lọc Tối Ưu 4 Bước
+                <i class="fa-solid fa-sliders"></i> Tab 1: Bộ Lọc Tối Ưu 4 Bước
             </button>
             <button class="tab-btn" data-tab="tab-results">
-                <i class="fa-solid fa-fire"></i> Dàn 60 Số N1 & Hạ Dàn
+                <i class="fa-solid fa-fire"></i> Tab 2: Dàn 60 Số N1 & Hạ Dàn
             </button>
             <button class="tab-btn" data-tab="tab-analytics">
-                <i class="fa-solid fa-chart-line"></i> Phân Tích & Win Rate
+                <i class="fa-solid fa-chart-line"></i> Tab 3: Phân Tích & Win Rate
             </button>
             <button class="tab-btn" data-tab="tab-history">
-                <i class="fa-solid fa-database"></i> Lịch Sử Quay 2026 (239 Kỳ)
+                <i class="fa-solid fa-database"></i> Tab 4: Lịch Sử Quay 2026 (239 Kỳ)
             </button>
         </nav>
 
@@ -106,19 +106,19 @@
                         <div class="scores-mini-panel">
                             <h4>Top 5 Đầu Mạnh Nhất:</h4>
                             <div class="badge-group" id="head-scores-list">
-                                <span class="score-badge active">Đầu 2: 13.0đ</span>
-                                <span class="score-badge active">Đầu 3: 11.0đ</span>
-                                <span class="score-badge active">Đầu 1: 10.5đ</span>
-                                <span class="score-badge active">Đầu 5: 9.5đ</span>
-                                <span class="score-badge active">Đầu 8: 9.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="2">Đầu 2: 13.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="3">Đầu 3: 11.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="1">Đầu 1: 10.5đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="5">Đầu 5: 9.5đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="8">Đầu 8: 9.0đ</span>
                             </div>
                             <h4 style="margin-top: 12px;">Top 5 Đuôi Mạnh Nhất:</h4>
                             <div class="badge-group" id="tail-scores-list">
-                                <span class="score-badge active">Đuôi 3: 11.5đ</span>
-                                <span class="score-badge active">Đuôi 1: 10.0đ</span>
-                                <span class="score-badge active">Đuôi 7: 9.0đ</span>
-                                <span class="score-badge active">Đuôi 5: 8.5đ</span>
-                                <span class="score-badge active">Đuôi 9: 8.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="3">Đuôi 3: 11.5đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="1">Đuôi 1: 10.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="7">Đuôi 7: 9.0đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="5">Đuôi 5: 8.5đ</span>
+                                <span class="score-badge active clickable-pill" data-copy="9">Đuôi 9: 8.0đ</span>
                             </div>
                         </div>
                     </div>
@@ -164,10 +164,10 @@
                             <span class="toggle-label">Kích hoạt Quy tắc Bóng Dương cho Top 10</span>
                         </label>
                         <div class="shadow-preview-box">
-                            <span class="shadow-tag">23 ➔ 78 ➔ 28</span>
-                            <span class="shadow-tag">39 ➔ 84 ➔ 89</span>
-                            <span class="shadow-tag">13 ➔ 68</span>
-                            <span class="shadow-tag">57 ➔ 02</span>
+                            <span class="shadow-tag clickable-pill" data-copy="28">23 ➔ 78 ➔ 28</span>
+                            <span class="shadow-tag clickable-pill" data-copy="89">39 ➔ 84 ➔ 89</span>
+                            <span class="shadow-tag clickable-pill" data-copy="68">13 ➔ 68</span>
+                            <span class="shadow-tag clickable-pill" data-copy="02">57 ➔ 02</span>
                         </div>
                     </div>
                 </div>
@@ -192,6 +192,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tab 1 Live Preview Visual Numbers Box -->
+            <div class="card glass" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-eye text-cyan"></i> Trực Quan Dàn 60 Số N1 Tức Thì (Tab 1 Live Preview)</h3>
+                    <button class="btn btn-sm btn-primary" id="btn-copy-tab1"><i class="fa-regular fa-copy"></i> Copy Dàn 60 Số Nổ Ngay</button>
+                </div>
+                <div class="number-tags-container" id="tab1-visual-grid">
+                    <!-- Dynamic Pills -->
+                </div>
+            </div>
         </section>
 
         <!-- TAB 2: DÀN 60 SỐ N1 & HẠ DÀN -->
@@ -199,7 +210,7 @@
             <div class="results-header glass">
                 <div>
                     <h2><i class="fa-solid fa-award text-amber"></i> Dàn 60 Số N1 Tối Ưu Mới</h2>
-                    <p>Dàn số đã qua 4 bước tối ưu toán học (Cập nhật cho Ngày <strong>Thứ Ba</strong>)</p>
+                    <p>Dàn số đã qua 4 bước tối ưu toán học (Bấm vào từng con số để Sao Chép nhanh)</p>
                 </div>
                 <div class="results-actions">
                     <button class="btn btn-primary" id="btn-copy-60">
@@ -231,7 +242,7 @@
                         <h3><i class="fa-solid fa-filter text-purple"></i> Dàn Siêu Lọc 36 Số (Hạ Dàn N2)</h3>
                         <button class="btn btn-sm btn-outline" id="btn-copy-36"><i class="fa-regular fa-copy"></i> Copy 36 Số</button>
                     </div>
-                    <p class="card-desc">Lọc từ Dàn 60 số bằng cách lấy các số có Điểm AI $\ge 30$ điểm và có trong Top 3 Đầu/Đuôi.</p>
+                    <p class="card-desc">Lọc từ Dàn 60 số bằng cách lấy các số có Điểm AI &ge; 30 điểm và thuộc Top Đầu/Đuôi.</p>
                     <div class="number-tags-container" id="grid-36-numbers">
                         <!-- Rendered by JS -->
                     </div>
@@ -249,13 +260,41 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Additional 3D / 4D Visual Grid -->
+            <div class="lowering-section grid-2" style="margin-top: 20px;">
+                <!-- 3D Ba Càng -->
+                <div class="card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-cubes text-amber"></i> Top 20 Ba Càng (3D) Mạnh Nhất</h3>
+                        <button class="btn btn-sm btn-outline" id="btn-copy-3d"><i class="fa-regular fa-copy"></i> Copy Top 3D</button>
+                    </div>
+                    <div class="number-tags-container" id="grid-3d-numbers">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- 4D Bốn Càng -->
+                <div class="card glass">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-shield-halved text-cyan"></i> Top 20 Bốn Càng (4D) Mạnh Nhất</h3>
+                        <button class="btn btn-sm btn-outline" id="btn-copy-4d"><i class="fa-regular fa-copy"></i> Copy Top 4D</button>
+                    </div>
+                    <div class="number-tags-container" id="grid-4d-numbers">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- TAB 3: PHÂN TÍCH & WIN RATE -->
         <section id="tab-analytics" class="tab-content">
             <div class="analytics-grid">
                 <div class="card glass">
-                    <h3><i class="fa-solid fa-chart-column text-cyan"></i> Bảng So Sánh Hiệu Năng (Trước vs Sau Tối Ưu)</h3>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-column text-cyan"></i> Bảng So Sánh Hiệu Năng (Trước vs Sau Tối Ưu)</h3>
+                        <button class="btn btn-sm btn-primary" id="btn-copy-headtail"><i class="fa-regular fa-copy"></i> Copy Top Đầu/Đuôi</button>
+                    </div>
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -301,7 +340,10 @@
                 </div>
 
                 <div class="card glass">
-                    <h3><i class="fa-solid fa-cubes text-amber"></i> Top 10 Con Số Hỏa Lực Gaussian Nhịp Vàng</h3>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-cubes text-amber"></i> Top 10 Con Số Hỏa Lực Gaussian Nhịp Vàng</h3>
+                        <button class="btn btn-sm btn-primary" id="btn-copy-gaussian"><i class="fa-regular fa-copy"></i> Copy Dàn Nhịp Vàng</button>
+                    </div>
                     <div class="nhip-vang-list" id="nhip-vang-container">
                         <!-- Rendered by JS -->
                     </div>
@@ -314,9 +356,12 @@
             <div class="card glass">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-clock-rotate-left"></i> Dữ Liệu Lịch Sử Kết Quả XSMB 2026 (239 Kỳ Quay)</h3>
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="history-search" placeholder="Tìm theo ngày, thứ, giải đặc biệt...">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <button class="btn btn-sm btn-primary" id="btn-copy-30recent"><i class="fa-regular fa-copy"></i> Copy 30 Kỳ Đề Gần Nhất</button>
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="history-search" placeholder="Tìm theo ngày, thứ, giải đặc biệt...">
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -326,7 +371,7 @@
                                 <th>STT</th>
                                 <th>Ngày Quay</th>
                                 <th>Giải Đặc Biệt</th>
-                                <th>Số Đề (2 số)</th>
+                                <th>Số Đề (2 số) (Click Copy)</th>
                                 <th>G7.1</th>
                                 <th>G7.2</th>
                                 <th>G7.3</th>
@@ -343,7 +388,7 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <p>© 2026 Antigravity AI Lab — XSMB 4-Step Dynamic Optimization System. All data synced from <code>Thong_Ke_G7_Va_Top20_XSMB_2026.xlsx</code>.</p>
+            <p>© 2026 Antigravity AI Lab — XSMB 4-Step Dynamic Optimization System. All numbers interactive &amp; 1-click copyable.</p>
         </footer>
     </div>
 

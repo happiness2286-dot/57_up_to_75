@@ -522,18 +522,44 @@ body {
     gap: 8px;
 }
 
+.clickable-pill {
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.clickable-pill:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+}
+
 .num-pill {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius-sm);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.num-pill:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--accent-indigo);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 .num-pill.top { background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4); color: var(--accent-indigo); }
+.num-pill.gaussian { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: var(--accent-amber); }
+.num-pill.purple { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: var(--accent-purple); }
 
 /* Tables */
 .data-table {
