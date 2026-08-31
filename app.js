@@ -1,6 +1,6 @@
 /* ==========================================================================
    AI XSMB 2026 - OPTIMIZER MINI APP CORE LOGIC
-   (FIXED DATE 01/09/2026 & UPGRADED N2: 50 SỐ, N3: 40 SỐ)
+   (REVERTED TO 36 NUMBERS PLAN FOR N2 & N3)
    ========================================================================== */
 
 // Embedded Default Data Fallback
@@ -28,8 +28,8 @@ const DEFAULT_DATA = {
 
 let globalData = DEFAULT_DATA;
 let currentOptimized60 = [1, 2, 3, 5, 7, 8, 9, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 37, 38, 39, 51, 52, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 81, 82, 83, 85, 87, 88, 89, 91, 92, 93, 95, 97, 98, 99];
-let current50_N2 = []; // Upgraded N2 to 50 numbers
-let current40_N3 = []; // Upgraded N3 to 40 numbers
+let current36_N2 = [11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 37, 38, 39, 51, 52, 53, 55, 57, 58, 59, 81, 82, 83, 85, 87, 88, 89, 91];
+let current36_N3 = [1, 2, 3, 5, 7, 8, 9, 13, 17, 18, 22, 23, 25, 27, 28, 31, 32, 33, 37, 38, 39, 52, 53, 55, 57, 58, 61, 62, 63, 67, 68, 82, 83, 87, 88, 89];
 let current20 = [39, 13, 22, 43, 45, 57, 68, 18, 61, 72, 54, 9, 25, 34, 63, 70, 90, 36, 38, 83];
 let current3D = ['339', '443', '557', '225', '889', '770', '334', '993', '552', '884', '007', '775', '002', '220', '998', '448', '668', '113', '222', '338'];
 let current4D = ['1339', '2443', '3557', '4225', '5889', '6770', '7334', '8993', '9552', '0884', '1007', '2775', '3002', '4220', '5998', '6448', '7668', '8113', '9222', '0338'];
@@ -186,8 +186,8 @@ function initControls() {
     // Main Copy Buttons
     document.getElementById('btn-copy-tab1')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (${n1DateStr})!`));
     document.getElementById('btn-copy-60')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (${n1DateStr})!`));
-    document.getElementById('btn-copy-36')?.addEventListener('click', () => copyToClipboard(formatNumList(current50_N2), `Đã sao chép Dàn 50 Số N2 (${n2DateStr})!`));
-    document.getElementById('btn-copy-n3')?.addEventListener('click', () => copyToClipboard(formatNumList(current40_N3), `Đã sao chép Dàn 40 Số N3 (${n3DateStr})!`));
+    document.getElementById('btn-copy-36')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N2), `Đã sao chép Dàn 36 Số N2 (${n2DateStr})!`));
+    document.getElementById('btn-copy-n3')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N3), `Đã sao chép Dàn 36 Số N3 (${n3DateStr})!`));
     document.getElementById('btn-copy-20')?.addEventListener('click', () => copyToClipboard(formatNumList(current20), `Đã sao chép Dàn Top 20 (${n1DateStr})!`));
     document.getElementById('btn-copy-3d')?.addEventListener('click', () => copyToClipboard(current3D.join(', '), `Đã sao chép Top 20 3D (${n1DateStr})!`));
     document.getElementById('btn-copy-4d')?.addEventListener('click', () => copyToClipboard(current4D.join(', '), `Đã sao chép Top 20 4D (${n1DateStr})!`));
@@ -345,9 +345,16 @@ function runOptimizerEngine() {
 
     currentOptimized60 = selectedNums.sort((a, b) => a - b);
     
-    // UPGRADE N2 TO 50 NUMBERS & N3 TO 40 NUMBERS (Guarantee 22-24 win days/month)
-    current50_N2 = currentOptimized60.slice(0, 50);
-    current40_N3 = pool.filter(p => currentOptimized60.includes(p.num)).sort((a, b) => b.score - a.score).slice(0, 40).map(p => p.num).sort((a, b) => a - b);
+    // REVERT TO OPTIMIZED 36 NUMBERS PLAN FOR N2 & N3
+    current36_N2 = currentOptimized60.filter(n => {
+        const h = Math.floor(n / 10);
+        return [1, 2, 3, 5, 8, 9].includes(h);
+    }).slice(0, 36);
+
+    current36_N3 = currentOptimized60.filter(n => {
+        const t = n % 10;
+        return [1, 2, 3, 5, 7, 8].includes(t);
+    }).slice(0, 36);
 
     current20 = pool.filter(p => currentOptimized60.includes(p.num)).sort((a, b) => b.score - a.score).slice(0, 20).map(p => p.num).sort((a, b) => a - b);
 
@@ -399,21 +406,21 @@ function renderNumberGrid(nums) {
     });
 }
 
-// Render Lowering Grids (Top 50 N2, Top 40 N3, Top 20)
+// Render Lowering Grids (Top 36 N2, Top 36 N3, Top 20)
 function renderLoweringGrids() {
     const grid36 = document.getElementById('grid-36-numbers');
     const gridN3 = document.getElementById('grid-n3-numbers');
     const grid20 = document.getElementById('grid-20-numbers');
 
     if (grid36) {
-        grid36.innerHTML = current50_N2.map(n => {
+        grid36.innerHTML = current36_N2.map(n => {
             const str = String(n).padStart(2, '0');
             return `<span class="num-pill top clickable-pill" data-copy="${str}">${str} <i class="fa-regular fa-copy" style="font-size:0.75rem; opacity:0.6;"></i></span>`;
         }).join('');
     }
 
     if (gridN3) {
-        gridN3.innerHTML = current40_N3.map(n => {
+        gridN3.innerHTML = current36_N3.map(n => {
             const str = String(n).padStart(2, '0');
             return `<span class="num-pill purple clickable-pill" data-copy="${str}">${str} <i class="fa-regular fa-copy" style="font-size:0.75rem; opacity:0.6;"></i></span>`;
         }).join('');
@@ -547,7 +554,7 @@ function fallbackCopyText(text, msg) {
 
 // Download TXT
 function downloadTxtFile() {
-    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi Khung Moi N1: ${n1DateStr} (Kỳ vừa qua Đề 44 nổ TRÚNG N1 -> Reset Khung Mới)\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH KHUNG MỚI ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 50 SO (N2 DỤ PHONG ${n2DateStr}):\n${formatNumList(current50_N2)}\n\nDAN HOA LUC 40 SO (N3 DU PHONG ${n3DateStr}):\n${formatNumList(current40_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
+    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi Khung Moi N1: ${n1DateStr} (Kỳ vừa qua Đề 44 nổ TRÚNG N1 -> Reset Khung Mới)\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH KHUNG MỚI ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 36 SO (N2 DU PHONG ${n2DateStr}):\n${formatNumList(current36_N2)}\n\nDAN SIEU LOC 36 SO (N3 DU PHONG ${n3DateStr}):\n${formatNumList(current36_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
