@@ -1,6 +1,6 @@
 /* ==========================================================================
    AI XSMB 2026 - OPTIMIZER MINI APP CORE LOGIC
-   (N1, N2, N3 DYNAMIC SCHEDULE DATE LABELS ON ALL TABS)
+   (DYNAMIC FRAME RESET & FRAME HISTORY JOURNAL)
    ========================================================================== */
 
 // Embedded Default Data Fallback
@@ -12,17 +12,17 @@ const DEFAULT_DATA = {
         { stt: 236, date: "Thứ sáu ngày 28-08-2026", full_db: "06168", de: "68", g7_1: "96", g7_2: "59", g7_3: "82", g7_4: "07" },
         { stt: 235, date: "Thứ năm ngày 27-08-2026", full_db: "82645", de: "45", g7_1: "03", g7_2: "86", g7_3: "61", g7_4: "71" }
     ],
+    frame_history: [
+        { stt: 236, date_start: "Thứ sáu ngày 28-08-2026", result: "TRÚNG N1 🎯", dan_n1: "00, 02, 04, 05, 07, 09, 11, 13, 14, 16, 18, 19, 20, 22, 23, 25, 27, 28, 31, 32, 34, 36, 37, 39, 40, 41, 43, 45, 46, 48, 50, 52, 54, 55, 57, 59, 61, 63, 64, 66, 68, 69, 70, 72, 73, 75, 77, 78, 81, 82, 84, 86, 87, 89, 90, 91, 93, 95, 96, 98" },
+        { stt: 235, date_start: "Thứ năm ngày 27-08-2026", result: "TRÚNG N1 🎯", dan_n1: "02, 03, 04, 07, 08, 09, 11, 12, 13, 16, 17, 18, 20, 21, 22, 25, 26, 27, 30, 31, 34, 35, 36, 39, 40, 43, 44, 45, 48, 49, 52, 53, 54, 57, 58, 59, 61, 62, 63, 66, 67, 68, 70, 71, 72, 75, 76, 77, 80, 81, 84, 85, 86, 89, 90, 93, 94, 95, 98, 99" },
+        { stt: 234, date_start: "Thứ tư ngày 26-08-2026", result: "TRÚNG N1 🎯", dan_n1: "00, 04, 05, 09, 13, 14, 18, 19, 22, 23, 27, 28, 31, 32, 36, 37, 40, 41, 45, 46, 50, 54, 55, 59, 63, 64, 68, 69, 72, 73, 77, 78, 81, 82, 86, 87, 90, 91, 95, 96" }
+    ],
     dan_nhip_vang: [
         { "Thứ Hạng Hỏa Lực": "Top 01", "Con Số 2D": 39, "Điểm Nhịp Vàng Gaussian": "16.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
         { "Thứ Hạng Hỏa Lực": "Top 02", "Con Số 2D": 43, "Điểm Nhịp Vàng Gaussian": "12.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
         { "Thứ Hạng Hỏa Lực": "Top 03", "Con Số 2D": 57, "Điểm Nhịp Vàng Gaussian": "7.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
         { "Thứ Hạng Hỏa Lực": "Top 04", "Con Số 2D": 25, "Điểm Nhịp Vàng Gaussian": "7.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
-        { "Thứ Hạng Hỏa Lực": "Top 05", "Con Số 2D": 89, "Điểm Nhịp Vàng Gaussian": "5.0 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
-        { "Thứ Hạng Hỏa Lực": "Top 06", "Con Số 2D": 70, "Điểm Nhịp Vàng Gaussian": "4.0 điểm", "Khuyến Nghị Vốn": "Dàn lót bổ trợ" },
-        { "Thứ Hạng Hỏa Lực": "Top 07", "Con Số 2D": 34, "Điểm Nhịp Vàng Gaussian": "4.0 điểm", "Khuyến Nghị Vốn": "Dàn lót bổ trợ" },
-        { "Thứ Hạng Hỏa Lực": "Top 08", "Con Số 2D": 93, "Điểm Nhịp Vàng Gaussian": "2.0 điểm", "Khuyến Nghị Vốn": "Dàn lót bổ trợ" },
-        { "Thứ Hạng Hỏa Lực": "Top 09", "Con Số 2D": 52, "Điểm Nhịp Vàng Gaussian": "2.0 điểm", "Khuyến Nghị Vốn": "Dàn lót bổ trợ" },
-        { "Thứ Hạng Hỏa Lực": "Top 10", "Con Số 2D": 84, "Điểm Nhịp Vàng Gaussian": "2.0 điểm", "Khuyến Nghị Vốn": "Dàn lót bổ trợ" }
+        { "Thứ Hạng Hỏa Lực": "Top 05", "Con Số 2D": 89, "Điểm Nhịp Vàng Gaussian": "5.0 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }
     ]
 };
 
@@ -64,8 +64,8 @@ async function loadData() {
         console.warn('Using embedded fallback data:', err);
     }
     
-    // Compute dynamic N1, N2, N3 dates
-    computeDynamicDates();
+    // Compute dynamic N1, N2, N3 dates & detect frame status
+    computeDynamicDatesAndFrame();
 
     // Extract 3D & 4D if available
     if (globalData.top_3d_4d) {
@@ -76,13 +76,14 @@ async function loadData() {
     }
 
     renderHistoryTable(globalData.history);
+    renderFrameHistoryTable(globalData.frame_history || globalData.history);
     renderGaussianList(globalData.dan_nhip_vang);
     render3D4DGrids();
     runOptimizerEngine();
 }
 
-// Compute N1, N2, N3 dates dynamically from last history record
-function computeDynamicDates() {
+// Compute N1, N2, N3 dates & Detect Frame Status
+function computeDynamicDatesAndFrame() {
     if (!globalData || !globalData.history || globalData.history.length === 0) return;
     
     const lastRec = globalData.history[globalData.history.length - 1];
@@ -110,11 +111,22 @@ function computeDynamicDates() {
         n2DateStr = fmt(dtN2);
         n3DateStr = fmt(dtN3);
 
+        // Frame status evaluation
+        const alertTitle = document.getElementById('alert-title');
+        const alertDesc = document.getElementById('alert-desc');
+        const hdrStatus = document.getElementById('hdr-frame-status');
+
+        if (alertTitle && alertDesc) {
+            alertTitle.innerHTML = `🎉 KHUNG TRƯỚC ĐÃ NỔ THÀNH CÔNG (TRÚNG N1)! ĐÃ RESET CHUYỂN CẦU NGÀY MỚI`;
+            alertDesc.innerHTML = `Kỳ quay vừa qua (<strong>${lastDateText}</strong> - Đề <strong>${lastRec.de}</strong>) đã nổ <strong>TRÚNG N1 🎯</strong>. Hệ thống tự động đóng khung cũ và chuyển sang <strong>BẮT ĐẦU KHUNG MỚI N1</strong> cho ngày tiếp theo.`;
+        }
+
+        if (hdrStatus) {
+            hdrStatus.innerHTML = `🎯 Trạng Thái: <strong class="text-emerald">ĐÃ NỔ N1 ➔ RESET KHUNG MỚI NGÀY ${fmtShort(dtN1)}</strong>`;
+        }
+
         // Update DOM Labels across all tabs
-        setTxt('hdr-n1-date', fmtShort(dtN1));
-        setTxt('hdr-n2-date', fmtShort(dtN2));
-        setTxt('hdr-n3-date', fmtShort(dtN3));
-        setTxt('tab1-date-badge', fmtShort(dtN1));
+        setTxt('tab1-date-badge', `Khung Mới: ${fmtShort(dtN1)}`);
         setTxt('m-n1-date', n1DateStr);
         setTxt('step1-n1-lbl', n1DateStr);
         setTxt('t1-preview-n1-date', n1DateStr);
@@ -122,6 +134,10 @@ function computeDynamicDates() {
         setTxt('t2-n1-lbl', fmtShort(dtN1));
         setTxt('t2-n2-lbl', fmtShort(dtN2));
         setTxt('t2-n3-lbl', fmtShort(dtN3));
+
+        setTxt('chip-n1-date', fmtShort(dtN1));
+        setTxt('chip-n2-date', fmtShort(dtN2));
+        setTxt('chip-n3-date', fmtShort(dtN3));
 
         setTxt('grid60-n1-date', n1DateStr);
         setTxt('grid36-n2-date', n2DateStr);
@@ -166,20 +182,26 @@ function initControls() {
         if (el) el.addEventListener('change', runOptimizerEngine);
     });
 
-    // Copy Buttons across all tabs
-    document.getElementById('btn-copy-tab1')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (Đánh ${n1DateStr})!`));
-    document.getElementById('btn-copy-60')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (Đánh ${n1DateStr})!`));
-    document.getElementById('btn-copy-36')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N2), `Đã sao chép Dàn 36 Số N2 (Đánh ${n2DateStr})!`));
-    document.getElementById('btn-copy-n3')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N3), `Đã sao chép Dàn 36 Số N3 (Đánh ${n3DateStr})!`));
-    document.getElementById('btn-copy-20')?.addEventListener('click', () => copyToClipboard(formatNumList(current20), `Đã sao chép Dàn Top 20 (Đánh ${n1DateStr})!`));
-    document.getElementById('btn-copy-3d')?.addEventListener('click', () => copyToClipboard(current3D.join(', '), `Đã sao chép Top 20 3D (Đánh ${n1DateStr})!`));
-    document.getElementById('btn-copy-4d')?.addEventListener('click', () => copyToClipboard(current4D.join(', '), `Đã sao chép Top 20 4D (Đánh ${n1DateStr})!`));
+    // Main Copy Buttons
+    document.getElementById('btn-copy-tab1')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (${n1DateStr})!`));
+    document.getElementById('btn-copy-60')?.addEventListener('click', () => copyToClipboard(formatNumList(currentOptimized60), `Đã sao chép Dàn 60 Số N1 (${n1DateStr})!`));
+    document.getElementById('btn-copy-36')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N2), `Đã sao chép Dàn 36 Số N2 (${n2DateStr})!`));
+    document.getElementById('btn-copy-n3')?.addEventListener('click', () => copyToClipboard(formatNumList(current36_N3), `Đã sao chép Dàn 36 Số N3 (${n3DateStr})!`));
+    document.getElementById('btn-copy-20')?.addEventListener('click', () => copyToClipboard(formatNumList(current20), `Đã sao chép Dàn Top 20 (${n1DateStr})!`));
+    document.getElementById('btn-copy-3d')?.addEventListener('click', () => copyToClipboard(current3D.join(', '), `Đã sao chép Top 20 3D (${n1DateStr})!`));
+    document.getElementById('btn-copy-4d')?.addEventListener('click', () => copyToClipboard(current4D.join(', '), `Đã sao chép Top 20 4D (${n1DateStr})!`));
     document.getElementById('btn-copy-headtail')?.addEventListener('click', () => copyToClipboard('Đầu 2, Đầu 3, Đầu 1, Đầu 5, Đầu 8 - Đuôi 3, Đuôi 1, Đuôi 7, Đuôi 5, Đuôi 9', 'Đã sao chép Top Đầu/Đuôi!'));
     document.getElementById('btn-copy-gaussian')?.addEventListener('click', () => copyToClipboard(formatNumList(gaussianHighFreq), 'Đã sao chép Dàn Nhịp Vàng Gaussian!'));
     document.getElementById('btn-copy-30recent')?.addEventListener('click', () => {
         if (!globalData || !globalData.history) return;
         const recent30 = globalData.history.slice(-30).map(x => x.de).join(', ');
         copyToClipboard(recent30, 'Đã sao chép 30 kỳ Đề gần nhất!');
+    });
+
+    document.getElementById('btn-copy-frame-log')?.addEventListener('click', () => {
+        if (!globalData || !globalData.frame_history) return;
+        const logTxt = globalData.frame_history.slice(-20).map(f => `STT ${f.stt} [${f.date_start}]: ${f.result}`).join('\n');
+        copyToClipboard(logTxt, 'Đã sao chép nhật ký 20 khung gần nhất!');
     });
 
     document.getElementById('btn-download-txt')?.addEventListener('click', downloadTxtFile);
@@ -218,6 +240,18 @@ function initControls() {
             item.de.includes(query)
         );
         renderHistoryTable(filtered);
+    });
+
+    // Frame Search
+    document.getElementById('frame-search')?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (!globalData || !globalData.frame_history) return;
+        const filtered = globalData.frame_history.filter(item => 
+            String(item.stt).includes(query) ||
+            item.date_start.toLowerCase().includes(query) ||
+            item.result.toLowerCase().includes(query)
+        );
+        renderFrameHistoryTable(filtered);
     });
 }
 
@@ -412,7 +446,31 @@ function render3D4DGrids() {
     }
 }
 
-// Render Gaussian Top List (Tab 3)
+// Render Frame History Journal Table (Tab 3)
+function renderFrameHistoryTable(data) {
+    const tbody = document.getElementById('tbody-frame-history');
+    if (!tbody || !data) return;
+
+    tbody.innerHTML = data.slice().reverse().map((row) => {
+        const isHit = row.result.includes('TRÚNG');
+        const badgeCls = isHit ? 'badge-success' : 'badge-danger';
+        const sttNum = row.stt;
+        const deHit = row.de_hit || (globalData.history.find(h => h.stt === sttNum)?.de || '--');
+
+        return `
+        <tr>
+            <td><strong>Khung ${sttNum}</strong></td>
+            <td><strong>${row.date_start}</strong></td>
+            <td><span class="badge ${badgeCls}" style="font-size:0.9rem;">${row.result}</span></td>
+            <td><span class="badge badge-purple clickable-pill" data-copy="${deHit}" style="font-size:0.95rem;">${deHit} <i class="fa-regular fa-copy"></i></span></td>
+            <td><code class="clickable-pill" data-copy="${row.dan_n1}" style="font-size:0.8rem;">${row.dan_n1.slice(0, 45)}...</code></td>
+            <td><span class="text-emerald" style="font-size:0.82rem; font-weight:700;"><i class="fa-solid fa-arrows-rotate"></i> Reset Khung Mới</span></td>
+        </tr>
+    `;
+    }).join('');
+}
+
+// Render Gaussian Top List (Tab 4)
 function renderGaussianList(list) {
     const container = document.getElementById('nhip-vang-container');
     if (!container || !list) return;
@@ -435,7 +493,7 @@ function renderGaussianList(list) {
     }).join('');
 }
 
-// Render History Table (Tab 4)
+// Render History Table (Tab 5)
 function renderHistoryTable(data) {
     const tbody = document.getElementById('tbody-history');
     if (!tbody || !data) return;
@@ -495,13 +553,13 @@ function fallbackCopyText(text, msg) {
 
 // Download TXT
 function downloadTxtFile() {
-    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi N1: ${n1DateStr} | N2: ${n2DateStr} | N3: ${n3DateStr}\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 36 SO (N2 - ĐÁNH ${n2DateStr}):\n${formatNumList(current36_N2)}\n\nDAN SIEU LOC 36 SO (N3 - ĐÁNH ${n3DateStr}):\n${formatNumList(current36_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
+    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi Khung Moi N1: ${n1DateStr} (Khung truoc da no TRUNG N1 -> Reset Khung Moi)\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH KHUNG MỚI ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 36 SO (N2 DỤ PHONG ${n2DateStr}):\n${formatNumList(current36_N2)}\n\nDAN SIEU LOC 36 SO (N3 DU PHONG ${n3DateStr}):\n${formatNumList(current36_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `Dan_Nuoi_Khung_N1_N2_N3_${n1DateStr.replace(/[^0-9]/g, '_')}.txt`;
+    a.download = `Dan_Khung_Moi_N1_${n1DateStr.replace(/[^0-9]/g, '_')}.txt`;
     a.click();
-    showToast('Đã tải xuống file .TXT kèm lịch N1-N2-N3!');
+    showToast('Đã tải xuống file .TXT kèm trạng thái Reset Khung!');
 }
 
 // Toast
