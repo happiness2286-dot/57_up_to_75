@@ -4,18 +4,18 @@
    ========================================================================== */
 
 // Embedded Default Data Fallback
+// Embedded Default Data Fallback
 const DEFAULT_DATA = {
     history: [
+        { stt: 240, date: "Thứ ba ngày 01-09-2026", full_db: "05521", de: "21", g7_1: "63", g7_2: "93", g7_3: "51", g7_4: "68" },
         { stt: 239, date: "Thứ hai ngày 31-08-2026", full_db: "35644", de: "44", g7_1: "77", g7_2: "34", g7_3: "70", g7_4: "20" },
         { stt: 238, date: "Chủ nhật ngày 30-08-2026", full_db: "83772", de: "72", g7_1: "66", g7_2: "21", g7_3: "34", g7_4: "78" },
         { stt: 237, date: "Thứ bảy ngày 29-08-2026", full_db: "90737", de: "37", g7_1: "62", g7_2: "43", g7_3: "34", g7_4: "01" },
-        { stt: 236, date: "Thứ sáu ngày 28-08-2026", full_db: "06168", de: "68", g7_1: "96", g7_2: "59", g7_3: "82", g7_4: "07" },
-        { stt: 235, date: "Thứ năm ngày 27-08-2026", full_db: "82645", de: "45", g7_1: "03", g7_2: "86", g7_3: "61", g7_4: "71" }
+        { stt: 236, date: "Thứ sáu ngày 28-08-2026", full_db: "06168", de: "68", g7_1: "96", g7_2: "59", g7_3: "82", g7_4: "07" }
     ],
     frame_history: [
-        { stt: 239, date_start: "Thứ hai ngày 31-08-2026", result: "TRÚNG N1 🎯", de_hit: "44", dan_n1: "00, 02, 04, 05, 07, 09, 11, 13, 14, 16, 18, 19, 20, 22, 23, 25, 27, 28, 31, 32, 34, 36, 37, 39, 40, 41, 43, 44, 45, 46, 48, 50, 52, 54, 55, 57, 59, 61, 63, 64, 66, 68, 69, 70, 72, 73, 75, 77, 78, 81, 82, 84, 86, 87, 89, 90, 91, 93, 95, 96, 98" },
-        { stt: 238, date_start: "Chủ nhật ngày 30-08-2026", result: "TRÚNG N1 🎯", de_hit: "72", dan_n1: "00, 02, 04, 05, 07, 09, 11, 13, 14, 16, 18, 19, 20, 22, 23, 25, 27, 28, 31, 32, 34, 36, 37, 39, 40, 41, 43, 45, 46, 48, 50, 52, 54, 55, 57, 59, 61, 63, 64, 66, 68, 69, 70, 72, 73, 75, 77, 78, 81, 82, 84, 86, 87, 89, 90, 91, 93, 95, 96, 98" },
-        { stt: 237, date_start: "Thứ bảy ngày 29-08-2026", result: "TRÚNG N1 🎯", de_hit: "37", dan_n1: "00, 04, 05, 09, 13, 14, 18, 19, 22, 23, 27, 28, 31, 32, 36, 37, 40, 41, 45, 46, 50, 54, 55, 59, 63, 64, 68, 69, 72, 73, 77, 78, 81, 82, 86, 87, 90, 91, 95, 96" }
+        { stt: 240, date_start: "Thứ ba ngày 01-09-2026", result: "TRÚNG N1 🎯", de_hit: "21", dan_n1: "01, 02, 03, 05, 07, 08, 09, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 37, 38, 39, 51, 52, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 81, 82, 83, 85, 87, 88, 89, 91, 92, 93, 95, 97, 98, 99" },
+        { stt: 239, date_start: "Thứ hai ngày 31-08-2026", result: "TRÚNG N1 🎯", de_hit: "44", dan_n1: "00, 02, 04, 05, 07, 09, 11, 13, 14, 16, 18, 19, 20, 22, 23, 25, 27, 28, 31, 32, 34, 36, 37, 39, 40, 41, 43, 44, 45, 46, 48, 50, 52, 54, 55, 57, 59, 61, 63, 64, 66, 68, 69, 70, 72, 73, 75, 77, 78, 81, 82, 84, 86, 87, 89, 90, 91, 93, 95, 96, 98" }
     ],
     dan_nhip_vang: [
         { "Thứ Hạng Hỏa Lực": "Top 01", "Con Số 2D": 39, "Điểm Nhịp Vàng Gaussian": "16.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" },
@@ -37,9 +37,9 @@ let current4D = ['1339', '2443', '3557', '4225', '5889', '6770', '7334', '8993',
 let selectedNextDayMode = 'n1'; // 'n1', 'n2', or 'n3'
 
 // Date Labels for Schedule N1, N2, N3
-let n1DateStr = "Thứ Ba (01/09/2026)";
-let n2DateStr = "Thứ Tư (02/09/2026)";
-let n3DateStr = "Thứ Năm (03/09/2026)";
+let n1DateStr = "Thứ Tư (02/09/2026)";
+let n2DateStr = "Thứ Năm (03/09/2026)";
+let n3DateStr = "Thứ Sáu (04/09/2026)";
 
 const headScores = { 0: 7.5, 1: 10.5, 2: 13.0, 3: 11.0, 4: 5.5, 5: 9.5, 6: 8.5, 7: 6.0, 8: 9.0, 9: 8.5 };
 const tailScores = { 0: 6.5, 1: 10.0, 2: 7.0, 3: 11.5, 4: 6.0, 5: 8.5, 6: 6.5, 7: 9.0, 8: 7.5, 9: 8.0 };
@@ -49,7 +49,7 @@ function getRecent2Days() {
         const sortedHist = globalData.history.slice().sort((a, b) => (Number(a.stt) || 0) - (Number(b.stt) || 0));
         return sortedHist.slice(-2).map(x => parseInt(x.de)).filter(x => !isNaN(x));
     }
-    return [72, 44];
+    return [44, 21];
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -95,10 +95,16 @@ async function loadData() {
 function computeDynamicDatesAndFrame() {
     if (!globalData || !globalData.history || globalData.history.length === 0) return;
     
-    // SORT BY STT ASCENDING AND GET THE ABSOLUTE MAXIMUM STT RECORD (STT 239)
+    // SORT BY STT ASCENDING AND GET THE ABSOLUTE MAXIMUM STT RECORD (STT 240)
     const sortedHist = globalData.history.slice().sort((a, b) => (Number(a.stt) || 0) - (Number(b.stt) || 0));
     const lastRec = sortedHist[sortedHist.length - 1];
-    const lastDateText = lastRec.date || 'Thứ hai ngày 31-08-2026';
+    const lastDateText = lastRec.date || 'Thứ ba ngày 01-09-2026';
+
+    const recent2 = getRecent2Days();
+    const recent2Fmt = recent2.map(x => `'${String(x).padStart(2, '0')}'`).join(', ');
+    const recent2Dash = recent2.map(x => String(x).padStart(2, '0')).join('-');
+    setTxt('lbl-recent-2days', recent2Fmt);
+    setTxt('metric-filtered-desc', `Đầu 4, 7, Lô rơi ${recent2Dash}, Điểm <7.0`);
 
     const match = lastDateText.match(/(\d{2})-(\d{2})-(\d{4})/);
     if (match) {
@@ -179,6 +185,7 @@ function computeDynamicDatesAndFrame() {
         setTxt('t4-last-date', lastDateText);
     }
 }
+
 
 
 function setTxt(id, txt) {
