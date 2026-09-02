@@ -44,7 +44,13 @@ let n3DateStr = "Thứ Năm (03/09/2026)";
 const headScores = { 0: 7.5, 1: 10.5, 2: 13.0, 3: 11.0, 4: 5.5, 5: 9.5, 6: 8.5, 7: 6.0, 8: 9.0, 9: 8.5 };
 const tailScores = { 0: 6.5, 1: 10.0, 2: 7.0, 3: 11.5, 4: 6.0, 5: 8.5, 6: 6.5, 7: 9.0, 8: 7.5, 9: 8.0 };
 const gaussianHighFreq = [39, 43, 57, 25, 89, 70, 34, 93, 52, 84, 7, 75, 2, 20, 98, 48];
-const recent2Days = [72, 44];
+function getRecent2Days() {
+    if (globalData && globalData.history && globalData.history.length >= 2) {
+        const sortedHist = globalData.history.slice().sort((a, b) => (Number(a.stt) || 0) - (Number(b.stt) || 0));
+        return sortedHist.slice(-2).map(x => parseInt(x.de)).filter(x => !isNaN(x));
+    }
+    return [72, 44];
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
@@ -120,13 +126,27 @@ function computeDynamicDatesAndFrame() {
         const alertDesc = document.getElementById('alert-desc');
         const hdrStatus = document.getElementById('hdr-frame-status');
 
+        const frameHist = globalData.frame_history || [];
+        const lastFrame = frameHist.find(f => f.stt === lastRec.stt) || frameHist[frameHist.length - 1];
+        const resultLabel = (lastFrame && lastFrame.result) ? lastFrame.result : 'TRÚNG N1 🎯';
+        const isHit = resultLabel.includes('TRÚNG');
+
         if (alertTitle && alertDesc) {
-            alertTitle.innerHTML = `🎉 KỲ GẦN NHẤT (${lastDateText} - ĐỀ ${lastRec.de}) ĐÃ TRÚNG N1 🎯 -> CHUYỂN CẦU MỚI`;
-            alertDesc.innerHTML = `Kỳ quay vừa qua (<strong>${lastDateText}</strong> - Đề <strong>${lastRec.de}</strong>) đã nổ <strong>TRÚNG N1 🎯</strong>. Hệ thống tự động đóng khung cũ và khởi tạo <strong>CẦU MỚI N1</strong> cho ngày <strong>${n1DateStr}</strong>.`;
+            if (isHit) {
+                alertTitle.innerHTML = `🎉 KỲ GẦN NHẤT (${lastDateText} - ĐỀ ${lastRec.de}) ĐÃ ${resultLabel} -> RESET CẦU MỚI`;
+                alertDesc.innerHTML = `Kỳ quay vừa qua (<strong>${lastDateText}</strong> - Đề <strong>${lastRec.de}</strong>) đã nổ <strong>${resultLabel}</strong>. Hệ thống tự động đóng khung cũ và khởi tạo <strong>CẦU MỚI N1</strong> cho ngày <strong>${n1DateStr}</strong>.`;
+            } else {
+                alertTitle.innerHTML = `⚠️ KỲ GẦN NHẤT (${lastDateText} - ĐỀ ${lastRec.de}) TRƯỢT ❌ -> CHUYỂN KHUNG N2/N3`;
+                alertDesc.innerHTML = `Kỳ quay vừa qua (<strong>${lastDateText}</strong> - Đề <strong>${lastRec.de}</strong>) không nằm trong Dàn N1. Hệ thống khuyến nghị chuyển sang đánh <strong>DÀN N2 / N3</strong> cho ngày <strong>${n1DateStr}</strong>.`;
+            }
         }
 
         if (hdrStatus) {
-            hdrStatus.innerHTML = `🎯 Trạng Thái: <strong class="text-emerald">ĐÃ NỔ N1 ➔ RESET KHUNG MỚI NGÀY ${fmtShort(dtN1)}</strong>`;
+            if (isHit) {
+                hdrStatus.innerHTML = `🎯 Trạng Thái: <strong class="text-emerald">ĐÃ NỔ ➔ RESET KHUNG MỚI NGÀY ${fmtShort(dtN1)}</strong>`;
+            } else {
+                hdrStatus.innerHTML = `⚠️ Trạng Thái: <strong class="text-amber">CHƯA NỔ N1 ➔ CHUYỂN DÀN N2 NGÀY ${fmtShort(dtN1)}</strong>`;
+            }
         }
 
         // Update ALL DOM Labels across all tabs explicitly
@@ -159,6 +179,7 @@ function computeDynamicDatesAndFrame() {
         setTxt('t4-last-date', lastDateText);
     }
 }
+
 
 function setTxt(id, txt) {
     const el = document.getElementById(id);
@@ -332,8 +353,9 @@ function runOptimizerEngine() {
     const useShadows = document.getElementById('chk-shadow-swap')?.checked ?? true;
     const use30DayCross = document.getElementById('chk-30day-cross')?.checked ?? true;
 
-    // Recent 30 history
+    // Recent 30 history & 2 days
     const recent30Hits = (globalData && globalData.history) ? globalData.history.slice(-30).map(x => parseInt(x.de)).filter(x => !isNaN(x)) : [];
+    const recent2Days = getRecent2Days();
 
     // Calculate score for 100 numbers
     let pool = [];
@@ -618,7 +640,14 @@ function fallbackCopyText(text, msg) {
 
 // Download TXT
 function downloadTxtFile() {
-    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi Khung Moi N1: ${n1DateStr} (Kỳ vừa qua Đề 44 nổ TRÚNG N1 -> Reset Khung Mới)\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH KHUNG MỚI ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 36 SO (N2 DU PHONG ${n2DateStr}):\n${formatNumList(current36_N2)}\n\nDAN SIEU LOC 36 SO (N3 DU PHONG ${n3DateStr}):\n${formatNumList(current36_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
+    const sortedHist = (globalData && globalData.history) ? globalData.history.slice().sort((a, b) => (Number(a.stt) || 0) - (Number(b.stt) || 0)) : [];
+    const lastRec = sortedHist[sortedHist.length - 1] || {};
+    const frameHist = (globalData && globalData.frame_history) ? globalData.frame_history : [];
+    const lastFrame = frameHist.find(f => f.stt === lastRec.stt) || frameHist[frameHist.length - 1] || {};
+    const lastRes = lastFrame.result || 'TRÚNG N1 🎯';
+    const lastDe = lastRec.de || '--';
+
+    const content = `DAN 60 SO N1 TOI UU 4 BUOC - XSMB 2026\nLich choi Khung Moi N1: ${n1DateStr} (Kỳ vừa qua Đề ${lastDe} nổ ${lastRes} -> Reset Khung Mới)\n=========================================\n\nDAN GOC 60 SO (N1 - ĐÁNH KHUNG MỚI ${n1DateStr}):\n${formatNumList(currentOptimized60)}\n\nDAN SIEU LOC 36 SO (N2 DU PHONG ${n2DateStr}):\n${formatNumList(current36_N2)}\n\nDAN SIEU LOC 36 SO (N3 DU PHONG ${n3DateStr}):\n${formatNumList(current36_N3)}\n\nDAN HOA LUC TOP 20 (ĐÁNH ${n1DateStr}):\n${formatNumList(current20)}\n\nTOP 20 BA CANG 3D (ĐÁNH ${n1DateStr}):\n${current3D.join(', ')}\n\nTOP 20 BON CANG 4D (ĐÁNH ${n1DateStr}):\n${current4D.join(', ')}`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -626,6 +655,7 @@ function downloadTxtFile() {
     a.click();
     showToast('Đã tải xuống file .TXT!');
 }
+
 
 // Toast
 function showToast(msg) {
