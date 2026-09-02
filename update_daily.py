@@ -165,6 +165,48 @@ def sync_frame_history(data):
     data['frame_history'] = frame_history
     return updated
 
+def update_app_js_fallback(data):
+    if not os.path.exists('app.js'):
+        return
+    
+    history = data.get('history', [])
+    frame_history = data.get('frame_history', [])
+    if not history:
+        return
+
+    latest_hist = history[-5:][::-1]
+    latest_frame = frame_history[-5:][::-1]
+    
+    recent_5_hist_json = json.dumps(latest_hist, ensure_ascii=False, indent=8)
+    recent_5_frame_json = json.dumps(latest_frame, ensure_ascii=False, indent=8)
+    
+    with open('app.js', 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    new_default_data = f"""const DEFAULT_DATA = {{
+    history: {recent_5_hist_json},
+    frame_history: {recent_5_frame_json},
+    dan_nhip_vang: [
+        {{ "Thứ Hạng Hỏa Lực": "Top 01", "Con Số 2D": 39, "Điểm Nhịp Vàng Gaussian": "16.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }},
+        {{ "Thứ Hạng Hỏa Lực": "Top 02", "Con Số 2D": 43, "Điểm Nhịp Vàng Gaussian": "12.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }},
+        {{ "Thứ Hạng Hỏa Lực": "Top 03", "Con Số 2D": 57, "Điểm Nhịp Vàng Gaussian": "7.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }},
+        {{ "Thứ Hạng Hỏa Lực": "Top 04", "Con Số 2D": 25, "Điểm Nhịp Vàng Gaussian": "7.5 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }},
+        {{ "Thứ Hạng Hỏa Lực": "Top 05", "Con Số 2D": 89, "Điểm Nhịp Vàng Gaussian": "5.0 điểm", "Khuyến Nghị Vốn": "Ưu tiên hỏa lực chính" }}
+    ]
+}};"""
+
+    content_updated = re.sub(
+        r'// Embedded Default Data Fallback\s*const DEFAULT_DATA = \{.*?\};',
+        f'// Embedded Default Data Fallback\n{new_default_data}',
+        content,
+        flags=re.DOTALL
+    )
+
+    with open('app.js', 'w', encoding='utf-8') as f:
+        f.write(content_updated)
+        
+    print("🎉 Đã tự động đồng bộ dữ liệu dự phòng DEFAULT_DATA vào app.js!")
+
 def update_excel_and_json(result):
     if not result:
         return False
@@ -206,8 +248,11 @@ def update_excel_and_json(result):
         with open(DATA_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
+    # Always ensure app.js fallback data is synced
+    update_app_js_fallback(data)
+
     if already_exists and not frame_updated:
-        print(f"ℹ️ Kết quả ngày [{result['date']}] ({result['gdb']}) đã tồn tại trong cơ sở dữ liệu. Không cần bổ sung.")
+        print(f"ℹ️ Kết quả ngày [{result['date']}] ({result['gdb']}) đã tồn tại trong cơ sở dữ liệu. Hệ thống đã tối ưu đồng bộ 100%.")
         return False
 
     # Optionally update Excel file if openpyxl is installed
