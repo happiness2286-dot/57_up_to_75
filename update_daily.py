@@ -207,6 +207,50 @@ def update_app_js_fallback(data):
         
     print("🎉 Đã tự động đồng bộ dữ liệu dự phòng DEFAULT_DATA vào app.js!")
 
+def update_index_html_version():
+    if not os.path.exists('index.html'):
+        return
+    try:
+        with open('index.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        content_updated = re.sub(r'styles\.css\?v=[^\s"\'<>]+', f'styles.css?v={timestamp}', content)
+        content_updated = re.sub(r'app\.js\?v=[^\s"\'<>]+', f'app.js?v={timestamp}', content_updated)
+        
+        with open('index.html', 'w', encoding='utf-8') as f:
+            f.write(content_updated)
+        print(f"🎉 Đã làm mới mã cache-busting index.html (v={timestamp})!")
+    except Exception as e:
+        print(f"⚠️ Không thể cập nhật version index.html: {e}")
+
+import subprocess
+
+def push_to_github():
+    print("\n" + "-" * 65)
+    print("  ĐANG KIỂM TRA THAY ĐỔI VÀ TUẦN TỰ PUSH LÊN GITHUB...")
+    print("-" * 65)
+    try:
+        subprocess.run(["git", "add", "."], check=True)
+        diff_res = subprocess.run(["git", "diff", "--cached", "--quiet"])
+        if diff_res.returncode != 0:
+            commit_msg = f"auto: Cap nhat ket qua XSMB ngay {datetime.now().strftime('%d/%m/%Y %H:%M')} & cache-busting"
+            subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+            print("✅ Đã tạo commit mới thành công!")
+        else:
+            print("ℹ️ Không có thay đổi file mới để commit.")
+
+        print("🚀 Đang đẩy dữ liệu mới nhất lên GitHub (origin main)...")
+        push_res = subprocess.run(["git", "push", "origin", "main"], capture_output=True, text=True)
+        if push_res.returncode == 0:
+            print("=================================================================")
+            print("  🎉 ĐÃ TỰ ĐỘNG CẬP NHẬT VÀ PUSH LÊN GITHUB THANH CONG!")
+            print("=================================================================")
+        else:
+            print(f"⚠️ Git push output: {push_res.stdout.strip()} {push_res.stderr.strip()}")
+    except Exception as e:
+        print(f"❌ Lỗi trong quá trình Push Git: {e}")
+
 def update_excel_and_json(result):
     if not result:
         return False
@@ -250,10 +294,12 @@ def update_excel_and_json(result):
 
     # Always ensure app.js fallback data is synced
     update_app_js_fallback(data)
+    
+    # Always refresh cache-busting version in index.html
+    update_index_html_version()
 
     if already_exists and not frame_updated:
-        print(f"ℹ️ Kết quả ngày [{result['date']}] ({result['gdb']}) đã tồn tại trong cơ sở dữ liệu. Hệ thống đã tối ưu đồng bộ 100%.")
-        return False
+        print(f"ℹ️ Kết quả ngày [{result['date']}] ({result['gdb']}) đã có trong cơ sở dữ liệu. Đã làm mới đồng bộ Web App & Cache!")
 
     # Optionally update Excel file if openpyxl is installed
     try:
@@ -292,4 +338,8 @@ if __name__ == '__main__':
         print("✅ Hoàn tất cập nhật dữ liệu ngày mới!")
     else:
         print("⚡ Dữ liệu hiện tại đã là mới nhất.")
+        
+    # Auto push to GitHub on execution
+    push_to_github()
+
 
