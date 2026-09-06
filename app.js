@@ -8,6 +8,16 @@
 const DEFAULT_DATA = {
     history: [
         {
+                "stt": 244,
+                "date": "Chủ nhật ngày 06-09-2026",
+                "full_db": "61435",
+                "de": "35",
+                "g7_1": "58",
+                "g7_2": "64",
+                "g7_3": "38",
+                "g7_4": "33"
+        },
+        {
                 "stt": 243,
                 "date": "Thứ bảy ngày 05-09-2026",
                 "full_db": "24037",
@@ -46,19 +56,16 @@ const DEFAULT_DATA = {
                 "g7_2": "93",
                 "g7_3": "51",
                 "g7_4": "68"
-        },
-        {
-                "stt": 239,
-                "date": "Thứ hai ngày 31-08-2026",
-                "full_db": "35644",
-                "de": "44",
-                "g7_1": "77",
-                "g7_2": "34",
-                "g7_3": "70",
-                "g7_4": "20"
         }
 ],
     frame_history: [
+        {
+                "stt": 244,
+                "date_start": "Chủ nhật ngày 06-09-2026",
+                "result": "TRÚNG N1 🎯",
+                "de_hit": "35",
+                "dan_n1": "01, 02, 03, 05, 08, 09, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 24, 26, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 44, 45, 51, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 72, 78, 79, 80, 81, 82, 83, 84, 85, 87, 88, 91, 92, 95, 96, 97, 99 (60 số)"
+        },
         {
                 "stt": 243,
                 "date_start": "Thứ bảy ngày 05-09-2026",
@@ -86,13 +93,6 @@ const DEFAULT_DATA = {
                 "result": "TRÚNG N1 🎯",
                 "de_hit": "21",
                 "dan_n1": "01, 02, 03, 05, 07, 08, 09, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 37, 38, 39, 51, 52, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 81, 82, 83, 85, 87, 88, 89, 91, 92, 93, 95, 97, 98, 99 (56 số)"
-        },
-        {
-                "stt": 239,
-                "date_start": "Thứ hai ngày 31-08-2026",
-                "result": "TRƯỢT KHUNG ❌",
-                "de_hit": "44",
-                "dan_n1": "01, 02, 03, 05, 07, 08, 09, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 38, 39, 51, 52, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 81, 82, 83, 85, 87, 88, 89, 91, 92, 93, 95, 97, 98, 99 (55 số)"
         }
 ],
     dan_nhip_vang: [
@@ -459,31 +459,28 @@ function runOptimizerEngine() {
         let valid = true;
         let rejectReason = '';
 
-        // Hard filters
+        // Soft filters (Điểm phạt thay vì loại bỏ cứng)
         if (filterSatHeads && (h === 4 || h === 7)) {
-            valid = false;
-            rejectReason = 'Bão hòa (Đầu 4,7)';
+            score -= 12.0;
+            rejectReason = 'Phạt Đầu 4,7 (-12đ)';
         }
         if (filterRecent && recent2Days.includes(i)) {
-            valid = false;
-            rejectReason = 'Lô/Đề rơi 2 ngày';
+            score -= 15.0;
+            rejectReason = 'Phạt Đề rơi (-15đ)';
         }
         if (filterLowScores && (hScore < 7.0 || tScore < 7.0)) {
-            valid = false;
-            rejectReason = 'Điểm < 7.0';
+            score -= 8.0;
+            rejectReason = 'Phạt Đ/Đuôi kém (-8đ)';
         }
 
-        pool.push({ num: i, head: h, tail: t, score, valid, rejectReason, count30 });
+        pool.push({ num: i, head: h, tail: t, score, valid: true, rejectReason, count30 });
     }
 
-    // Sort valid numbers
-    let validPool = pool.filter(p => p.valid).sort((a, b) => b.score - a.score);
+    // Sort pool by total composite score
+    let validPool = pool.sort((a, b) => b.score - a.score);
 
     // Initial 60 selection
     let selectedNums = validPool.slice(0, 60).map(p => p.num);
-    if (selectedNums.length === 0) {
-        selectedNums = pool.sort((a, b) => b.score - a.score).slice(0, 60).map(p => p.num);
-    }
 
     // Step 3: Shadow injection
     if (useShadows) {

@@ -103,26 +103,24 @@ def get_dan_60(history_slice):
         count_30 = recent_30_hits.count(i)
         score += count_30 * 4.0
         
-        valid = True
+        # Soft filtering: Mềm hóa bộ lọc N1 bằng điểm phạt thay vì loại bỏ cứng
         if h == 4 or h == 7:
-            valid = False
+            score -= 12.0
         if i in recent_2_days:
-            valid = False
+            score -= 15.0
         if h_score < 7.0 or t_score < 7.0:
-            valid = False
+            score -= 8.0
             
-        pool.append({'num': i, 'score': score, 'valid': valid})
+        pool.append({'num': i, 'score': score, 'valid': True})
         
-    valid_pool = sorted([p for p in pool if p['valid']], key=lambda x: x['score'], reverse=True)
+    valid_pool = sorted(pool, key=lambda x: x['score'], reverse=True)
     selected = [p['num'] for p in valid_pool[:60]]
-    if not selected:
-        selected = [p['num'] for p in sorted(pool, key=lambda x: x['score'], reverse=True)[:60]]
         
     top_10 = selected[:10]
     for num in top_10:
         sh = ((num // 10 + 5) % 10) * 10 + ((num % 10 + 5) % 10)
         target = next((p for p in pool if p['num'] == sh), None)
-        if target and target['valid'] and sh not in selected and len(selected) < 60:
+        if target and sh not in selected and len(selected) < 60:
             selected.append(sh)
             
     if recent_30_hits:
