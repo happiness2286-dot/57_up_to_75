@@ -513,17 +513,12 @@ function runOptimizerEngine() {
     currentOptimized60 = selectedNums.sort((a, b) => a - b);
     
     // OPTIMIZED 36 NUMBERS PLAN FOR N2 & N3
-    current36_N2 = currentOptimized60.filter(n => {
-        const h = Math.floor(n / 10);
-        return [1, 2, 3, 5, 8, 9].includes(h);
-    }).slice(0, 36);
+    // Strictly extract Top 36 AI scored numbers from N1 60 numbers
+    const n1PoolWithScore = pool.filter(p => currentOptimized60.includes(p.num)).sort((a, b) => b.score - a.score);
+    current36_N2 = n1PoolWithScore.slice(0, 36).map(p => p.num).sort((a, b) => a - b);
+    current36_N3 = n1PoolWithScore.slice(0, 36).map(p => p.num).sort((a, b) => a - b);
 
-    current36_N3 = currentOptimized60.filter(n => {
-        const t = n % 10;
-        return [1, 2, 3, 5, 7, 8].includes(t);
-    }).slice(0, 36);
-
-    current20 = pool.filter(p => currentOptimized60.includes(p.num)).sort((a, b) => b.score - a.score).slice(0, 20).map(p => p.num).sort((a, b) => a - b);
+    current20 = n1PoolWithScore.slice(0, 20).map(p => p.num).sort((a, b) => a - b);
 
     // Update UI Metrics
     const metricSize = document.getElementById('metric-size');
