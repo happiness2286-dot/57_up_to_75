@@ -2452,6 +2452,16 @@
     },
     {
       "stt": 246,
+      "date": "Thứ tư ngày 09-09-2026",
+      "full_db": "94504",
+      "de": "04",
+      "g7_1": "18",
+      "g7_2": "20",
+      "g7_3": "87",
+      "g7_4": "62"
+    },
+    {
+      "stt": 247,
       "date": "Thứ năm ngày 10-09-2026",
       "full_db": "30981",
       "de": "81",
@@ -2836,7 +2846,7 @@
   "thong_ke_dau_duoi": [
     {
       "Hạng Mục Báo Cáo": "--- DỰ ĐOÁN ĐẦU / ĐUÔI VÀ DÀN SỐ CHO NGÀY TỚI ---",
-      "Chi Tiết Kế Thừa & Dự Đoán": NaN
+      "Chi Tiết Kế Thừa & Dự Đoán": null
     },
     {
       "Hạng Mục Báo Cáo": "Top 3 Đầu Tiềm Năng",
@@ -2852,7 +2862,7 @@
     },
     {
       "Hạng Mục Báo Cáo": "--- TẦN SUẤT ĐẦU NĂM 2026 ---",
-      "Chi Tiết Kế Thừa & Dự Đoán": NaN
+      "Chi Tiết Kế Thừa & Dự Đoán": null
     },
     {
       "Hạng Mục Báo Cáo": "Đầu 3",
@@ -2896,7 +2906,7 @@
     },
     {
       "Hạng Mục Báo Cáo": "--- TẦN SUẤT ĐUÔI NĂM 2026 ---",
-      "Chi Tiết Kế Thừa & Dự Đoán": NaN
+      "Chi Tiết Kế Thừa & Dự Đoán": null
     },
     {
       "Hạng Mục Báo Cáo": "Đuôi 4",
@@ -2974,7 +2984,7 @@
     },
     {
       "Hạng Mục Dự Đoán": "--- XU HƯỚNG VỊ TRÍ G7 THEO TỪNG THỨ (2026) ---",
-      "Chi Tiết Kế Thừa & Dự Đoán Theo Thứ": NaN
+      "Chi Tiết Kế Thừa & Dự Đoán Theo Thứ": null
     },
     {
       "Hạng Mục Dự Đoán": "Phong Độ Thứ Hai",
@@ -5381,10 +5391,17 @@
     },
     {
       "stt": 246,
-      "date_start": "Thứ năm ngày 10-09-2026",
-      "result": "TRÚNG N1 🎯",
-      "de_hit": "81",
+      "date_start": "Thứ tư ngày 09-09-2026",
+      "result": "TRƯỢT N1 ❌",
+      "de_hit": "04",
       "dan_n1": "01, 02, 03, 05, 08, 09, 11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 24, 26, 30, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 44, 45, 51, 53, 55, 57, 58, 59, 61, 62, 63, 65, 67, 68, 69, 72, 78, 80, 81, 82, 83, 84, 85, 87, 88, 91, 92, 95, 96, 97, 99 (60 số)"
+    },
+    {
+      "stt": 247,
+      "date_start": "Thứ năm ngày 10-09-2026",
+      "result": "TRÚNG N2 🎯",
+      "de_hit": "81",
+      "dan_n2": "11, 12, 13, 15, 17, 18, 19, 21, 22, 23, 25, 27, 28, 29, 31, 32, 33, 35, 37, 38, 39, 51, 52, 53, 55, 57, 58, 59, 81, 82, 83, 85, 87, 88, 89, 91 (36 số)"
     }
   ]
 }

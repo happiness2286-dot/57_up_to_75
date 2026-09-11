@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 > nul
+cd /d "%~dp0"
 
 title Auto Update XSMB va Push to GitHub 2026
 echo =================================================================
