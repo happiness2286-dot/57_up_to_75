@@ -21,23 +21,9 @@ if hasattr(sys.stdout, 'reconfigure'):
 DATA_JSON_PATH = 'data.json'
 EXCEL_PATH = 'Thong_Ke_G7_Va_Top20_XSMB_2026.xlsx'
 URL = 'https://ketqua16.net/'
+SO_KQ_URL = 'https://ketqua16.net/so-ket-qua'
 
-def fetch_latest_result():
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Đang kết nối tới {URL}...")
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-    req = urllib.request.Request(URL, headers=headers)
-    
-    try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            html = response.read().decode('utf-8')
-    except Exception as e:
-        print(f"❌ Lỗi khi tải dữ liệu từ {URL}: {e}")
-        return None
-
-    # Parse TD contents
-    matches = re.findall(r'<td[^>]*>(.*?)</td>', html, re.DOTALL | re.IGNORECASE)
-    clean_tds = [re.sub(r'<.*?>', '', m).strip() for m in matches if re.sub(r'<.*?>', '', m).strip()]
-    
+def parse_tds_to_result(clean_tds):
     date_str = None
     gdb_str = None
     g7_list = []
@@ -45,7 +31,6 @@ def fetch_latest_result():
     # Find Date
     for item in clean_tds:
         if 'ngày' in item.lower() and ('thứ' in item.lower() or 'chủ nhật' in item.lower()):
-            # e.g., 'Xổ số Truyền Thống \n\nThứ hai ngày 31-08-2026'
             lines = [l.strip() for l in item.split('\n') if l.strip()]
             date_str = lines[-1]
             break
@@ -58,28 +43,79 @@ def fetch_latest_result():
                 gdb_str = val
         if 'bảy' in item.lower() and idx + 1 < len(clean_tds):
             val = clean_tds[idx + 1]
-            # e.g. '77347020' -> 4 numbers of 2 digits
             digits = re.findall(r'\d{2}', val)
             if len(digits) >= 4:
                 g7_list = digits[:4]
 
     if not date_str or not gdb_str or len(g7_list) < 4:
-        print("❌ Không thể trích xuất đầy đủ thông tin từ trang ketqua16.net")
-        return None
+        return None, date_str
 
-    so_de = gdb_str[-2:]
-    result = {
+    return {
         'date': date_str,
         'gdb': gdb_str,
-        'de': so_de,
+        'de': gdb_str[-2:],
         'g7_1': g7_list[0],
         'g7_2': g7_list[1],
         'g7_3': g7_list[2],
         'g7_4': g7_list[3]
-    }
+    }, date_str
+
+def get_date_key(d_str):
+    if not d_str:
+        return datetime.min
+    m = re.search(r'(\d{2})-(\d{2})-(\d{4})', d_str)
+    if m:
+        return datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+    return datetime.min
+
+def fetch_all_recent_results():
+    results = {}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
     
-    print(f"✅ Đã cào thành công kết quả ngày [{date_str}]: GĐB={gdb_str} (Đề={so_de}), G7=[{', '.join(g7_list)}]")
-    return result
+    # 1. Ket noi trang chu
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Đang kết nối tới trang chủ {URL}...")
+    try:
+        req = urllib.request.Request(URL, headers=headers)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            html = resp.read().decode('utf-8')
+        tables = re.findall(r'<table[^>]*>(.*?)</table>', html, re.DOTALL)
+        if tables:
+            matches = re.findall(r'<td[^>]*>(.*?)</td>', tables[0], re.DOTALL | re.IGNORECASE)
+            clean_tds = [re.sub(r'<.*?>', '', m).strip() for m in matches if re.sub(r'<.*?>', '', m).strip()]
+            res, d_str = parse_tds_to_result(clean_tds)
+            if res:
+                results[res['date']] = res
+                print(f"✅ Tìm thấy kết quả ngày [{res['date']}]: GĐB={res['gdb']} (Đề={res['de']}), G7=[{', '.join([res['g7_1'], res['g7_2'], res['g7_3'], res['g7_4']])}]")
+            elif d_str:
+                print(f"⏳ Kỳ quay [{d_str}] trên trang chủ đang diễn ra trực tiếp hoặc chưa có đầy đủ kết quả.")
+    except Exception as e:
+        print(f"⚠️ Không thể tải dữ liệu từ trang chủ {URL}: {e}")
+
+    # 2. Ket noi so ket qua
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Đang tra cứu sổ kết quả {SO_KQ_URL}...")
+    try:
+        req = urllib.request.Request(SO_KQ_URL, headers=headers)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            html = resp.read().decode('utf-8')
+        tables = re.findall(r'<table[^>]*>(.*?)</table>', html, re.DOTALL)
+        count_so = 0
+        for t in tables:
+            matches = re.findall(r'<td[^>]*>(.*?)</td>', t, re.DOTALL | re.IGNORECASE)
+            clean_tds = [re.sub(r'<.*?>', '', m).strip() for m in matches if re.sub(r'<.*?>', '', m).strip()]
+            res, _ = parse_tds_to_result(clean_tds)
+            if res and res['date'] not in results:
+                results[res['date']] = res
+                count_so += 1
+        print(f"✅ Đã quét {count_so} kỳ quay đã hoàn tất từ sổ kết quả.")
+    except Exception as e:
+        print(f"⚠️ Không thể tải dữ liệu từ sổ kết quả {SO_KQ_URL}: {e}")
+
+    sorted_results = sorted(results.values(), key=lambda x: get_date_key(x['date']))
+    return sorted_results
+
+def fetch_latest_result():
+    results = fetch_all_recent_results()
+    return results[-1] if results else None
 
 def get_dan_60(history_slice):
     head_scores = {0: 7.5, 1: 10.5, 2: 13.0, 3: 11.0, 4: 5.5, 5: 9.5, 6: 8.5, 7: 6.0, 8: 9.0, 9: 8.5}
@@ -249,8 +285,10 @@ def push_to_github():
     except Exception as e:
         print(f"❌ Lỗi trong quá trình Push Git: {e}")
 
-def update_excel_and_json(result):
-    if not result:
+def update_database():
+    all_fetched = fetch_all_recent_results()
+    if not all_fetched:
+        print("❌ Không lấy được kết quả xổ số từ nguồn mạng.")
         return False
 
     # Load data.json
@@ -261,81 +299,94 @@ def update_excel_and_json(result):
         data = {'history': [], 'frame_history': []}
 
     history = data.get('history', [])
-    
-    # Check if date already exists
     last_record = history[-1] if history else None
-    already_exists = last_record and result['gdb'] == last_record['full_db']
+    last_date_key = get_date_key(last_record['date']) if last_record else datetime.min
 
-    if not already_exists:
-        new_stt = (last_record['stt'] + 1) if (last_record and isinstance(last_record['stt'], int)) else len(history) + 1
+    # Find new records that are newer than the last recorded date
+    new_results = [r for r in all_fetched if get_date_key(r['date']) > last_date_key]
+
+    if not new_results:
+        print(f"ℹ️ Dữ liệu đã là mới nhất (Kỳ gần nhất: STT {last_record['stt'] if last_record else 0} [{last_record['date'] if last_record else 'N/A'}] - GĐB: {last_record['full_db'] if last_record else 'N/A'}).")
+        # Ensure fallback & cache-busting always up to date
+        update_app_js_fallback(data)
+        update_index_html_version()
+        return False
+
+    print(f"🎯 Phát hiện {len(new_results)} kỳ quay mới cần bổ sung vào hệ thống:")
+    excel_new_rows = []
+
+    for res in new_results:
+        new_stt = (history[-1]['stt'] + 1) if (history and isinstance(history[-1]['stt'], int)) else len(history) + 1
         new_entry = {
             'stt': new_stt,
-            'date': result['date'],
-            'full_db': result['gdb'],
-            'de': result['de'],
-            'g7_1': result['g7_1'],
-            'g7_2': result['g7_2'],
-            'g7_3': result['g7_3'],
-            'g7_4': result['g7_4']
+            'date': res['date'],
+            'full_db': res['gdb'],
+            'de': res['de'],
+            'g7_1': res['g7_1'],
+            'g7_2': res['g7_2'],
+            'g7_3': res['g7_3'],
+            'g7_4': res['g7_4']
         }
-        
         history.append(new_entry)
-        data['history'] = history
-        print(f"🎉 Đã cập nhật STT {new_stt} ({result['date']}) vào data.json!")
+        print(f"  ✨ Bổ sung STT {new_stt} [{res['date']}]: GĐB={res['gdb']} (Đề={res['de']}), G7=[{res['g7_1']}, {res['g7_2']}, {res['g7_3']}, {res['g7_4']}]")
 
-    # Synchronize frame history hit/miss evaluation
+        excel_new_rows.append({
+            'STT': new_stt,
+            'Ngày Quay': res['date'],
+            'Giải Đặc Biệt (5 số)': res['gdb'],
+            'Số Đề (2 số cuối)': res['de'],
+            'G7.1': res['g7_1'],
+            'G7.2': res['g7_2'],
+            'G7.3': res['g7_3'],
+            'G7.4': res['g7_4']
+        })
+
+    data['history'] = history
+
+    # Synchronize frame history
     frame_updated = sync_frame_history(data)
+    if frame_updated:
+        print("🎯 Đã tái tính toán và đồng bộ toàn bộ lịch sử Khung Nuôi N1.")
 
-    if not already_exists or frame_updated:
-        with open(DATA_JSON_PATH, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+    # Save data.json
+    with open(DATA_JSON_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print("💾 Đã lưu thành công file data.json!")
 
-    # Always ensure app.js fallback data is synced
+    # Synchronize app.js
     update_app_js_fallback(data)
-    
-    # Always refresh cache-busting version in index.html
+
+    # Refresh cache-busting in index.html
     update_index_html_version()
 
-    if already_exists and not frame_updated:
-        print(f"ℹ️ Kết quả ngày [{result['date']}] ({result['gdb']}) đã có trong cơ sở dữ liệu. Đã làm mới đồng bộ Web App & Cache!")
-
-    # Optionally update Excel file if openpyxl is installed
-    try:
-        if not already_exists:
+    # Append to Excel file
+    if excel_new_rows:
+        try:
             xl = pd.ExcelFile(EXCEL_PATH)
             df_hist = xl.parse('Du_Lieu_2026')
-            if new_stt not in df_hist['STT'].values:
-                new_row = {
-                    'STT': new_stt,
-                    'Ngày Quay': result['date'],
-                    'Giải Đặc Biệt (5 số)': result['gdb'],
-                    'Số Đề (2 số cuối)': result['de'],
-                    'G7.1': result['g7_1'],
-                    'G7.2': result['g7_2'],
-                    'G7.3': result['g7_3'],
-                    'G7.4': result['g7_4']
-                }
-                df_updated = pd.concat([df_hist, pd.DataFrame([new_row])], ignore_index=True)
-                with pd.ExcelWriter(EXCEL_PATH, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-                    df_updated.to_excel(writer, sheet_name='Du_Lieu_2026', index=False)
-                print("🎉 Đã lưu dòng mới vào Excel file!")
-    except Exception as e:
-        print(f"⚠️ Lưu ý: Không thể ghi đè trực tiếp file Excel ({e}), nhưng data.json đã được cập nhật hoàn hảo cho Web App.")
+            df_updated = pd.concat([df_hist, pd.DataFrame(excel_new_rows)], ignore_index=True)
+            with pd.ExcelWriter(EXCEL_PATH, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+                df_updated.to_excel(writer, sheet_name='Du_Lieu_2026', index=False)
+            print(f"📊 Đã ghi bổ sung {len(excel_new_rows)} dòng mới vào file Excel ({EXCEL_PATH})!")
+        except Exception as e:
+            print(f"⚠️ Lưu ý: Không thể ghi đè file Excel ({e}), nhưng data.json và Web App đã được cập nhật hoàn hảo.")
 
     return True
+
+def update_excel_and_json(result):
+    return update_database()
 
 if __name__ == '__main__':
     print("=" * 65)
     print("   HỆ THỐNG CẬP NHẬT TỰ ĐỘNG KẾT QUẢ XSMB & TÁI TỐI ƯU 4 BƯỚC")
     print("=" * 65)
     
-    res = fetch_latest_result()
-    updated = update_excel_and_json(res)
+    updated = update_database()
     
     if updated:
-        print("✅ Hoàn tất cập nhật dữ liệu ngày mới!")
+        print("✅ Hoàn tất cập nhật và đồng bộ dữ liệu mới!")
     else:
-        print("⚡ Dữ liệu hiện tại đã là mới nhất.")
+        print("⚡ Dữ liệu hệ thống đã sẵn sàng.")
         
     # Auto push to GitHub on execution
     push_to_github()
