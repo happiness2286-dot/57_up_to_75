@@ -12,4 +12,8 @@ echo.
 python update_daily.py
 
 echo.
-pause
+echo =================================================================
+echo   HOAN TAT! Cua so se tu dong dong sau 10 giay...
+echo   (Hoac ban co the bam phim bat ky de dong ngay)
+echo =================================================================
+timeout /t 10 2>nul
