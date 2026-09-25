@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260924183514">
+    <link rel="stylesheet" href="styles.css?v=20260925121027">
 </head>
 <body>
     <div class="app-container">
@@ -71,13 +71,13 @@
         <!-- Navigation Tabs -->
         <nav class="nav-tabs">
             <button class="tab-btn active" data-tab="tab-optimizer">
-                <i class="fa-solid fa-sliders"></i> Tab 1: Bộ Lọc Tối Ưu (<span class="badge-tab-date" id="tab1-date-badge">Cầu Mới: Thứ Sáu 11/09</span>)
+                <i class="fa-solid fa-sliders"></i> Tab 1: Bộ Lọc Tối Ưu (<span class="badge-tab-date" id="tab1-date-badge">Cầu Mới: Thứ Sáu 25/09</span>)
             </button>
             <button class="tab-btn" data-tab="tab-results">
-                <i class="fa-solid fa-fire"></i> Tab 2: 3 Tầng (60s N1 - 36s N2 - 36s N3)
+                <i class="fa-solid fa-shield-halved text-emerald"></i> Tab 2: KHUNG HIỆN TẠI (<span id="nav-tab2-anchor">Mốc 24/09</span>)
             </button>
             <button class="tab-btn" data-tab="tab-next-day">
-                <i class="fa-solid fa-square-poll-vertical text-amber"></i> Tab 3: 🚀 Dàn Kế Tiếp &amp; Tùy Chọn N1/N2/N3
+                <i class="fa-solid fa-boxes-stacked text-amber"></i> Tab 3: KHUNG KẾ TIẾP (Dự Phòng Tham Khảo)
             </button>
             <button class="tab-btn" data-tab="tab-frame-history">
                 <i class="fa-solid fa-book-bookmark"></i> Tab 4: Nhật Ký Khung 2026
@@ -86,7 +86,7 @@
                 <i class="fa-solid fa-chart-line"></i> Tab 5: Phân Tích Win Rate
             </button>
             <button class="tab-btn" data-tab="tab-history">
-                <i class="fa-solid fa-database"></i> Tab 6: Lịch Sử Quay (247 Kỳ)
+                <i class="fa-solid fa-database"></i> Tab 6: Lịch Sử Quay (260 Kỳ)
             </button>
         </nav>
 
@@ -243,12 +243,12 @@
             </div>
         </section>
 
-        <!-- TAB 2: DÀN 60 SỐ N1 - 36 SỐ N2 - 36 SỐ N3 -->
+        <!-- TAB 2: KHUNG HIỆN TẠI (CỐ ĐỊNH - KHÔNG TỰ NHẢY) -->
         <section id="tab-results" class="tab-content">
             <div class="results-header glass">
                 <div>
-                    <h2><i class="fa-solid fa-award text-amber"></i> Hệ Thống 3 Tầng Chuẩn Mực (60 - 36 - 36) — Đạt 22-24 Ngày Trúng/Tháng</h2>
-                    <p>Sự phối hợp ăn ý 3 tầng: <span class="text-emerald">🎯 N1 (60s): <strong id="t2-n1-lbl">Thứ Ba 01/09</strong></span> ➔ <span class="text-purple">⚡ N2 (36s Tinh Nhuệ): <strong id="t2-n2-lbl">Thứ Tư 02/09</strong></span> ➔ <span class="text-amber">🔥 N3 (36s Chốt Khung): <strong id="t2-n3-lbl">Thứ Năm 03/09</strong></span></p>
+                    <h2><i class="fa-solid fa-shield-halved text-emerald"></i> Tab 2: KHUNG HIỆN TẠI (Cố Định 3 Ngày — Không Tự Nhảy)</h2>
+                    <p>Luôn hiển thị trọn vẹn 3 ngày (<span class="text-emerald">🎯 N1</span> ➔ <span class="text-purple">⚡ N2</span> ➔ <span class="text-amber">🔥 N3</span>) dựa trên ngày mốc (Anchor Date). Dù N1 trượt, Tab 2 vẫn giữ nguyên giao diện để theo dõi dàn N2, N3 cho đến khi hết chu kỳ.</p>
                 </div>
                 <div class="results-actions">
                     <button class="btn btn-primary" id="btn-copy-60">
@@ -260,12 +260,65 @@
                 </div>
             </div>
 
+            <!-- Date Picker Control Bar for Tab 2 -->
+            <div class="tab2-control-panel glass">
+                <div class="picker-group">
+                    <label for="tab2-date-picker"><i class="fa-solid fa-calendar-day text-cyan"></i> <strong>Chọn Ngày Mốc (Anchor Date):</strong></label>
+                    <input type="date" id="tab2-date-picker" class="date-picker-input">
+                    <select id="tab2-quick-select" class="quick-select" title="Chọn nhanh ngày mốc trong lịch sử">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="picker-actions">
+                    <button id="btn-tab2-current-frame" class="btn btn-sm btn-emerald" title="Quay lại khung đang đánh trực tiếp">
+                        <i class="fa-solid fa-crosshairs"></i> Về Khung Đang Đánh (<span id="lbl-active-anchor-short">24/09</span>)
+                    </button>
+                    <span id="tab2-anchor-status-badge" class="badge badge-success">
+                        <i class="fa-solid fa-lock"></i> KHUNG HIỆN TẠI
+                    </span>
+                </div>
+            </div>
+
+            <!-- 3-Day Cycle Tracker Bar -->
+            <div class="cycle-tracker-bar">
+                <div class="cycle-step-card glass" id="tracker-card-n1">
+                    <div class="step-card-header">
+                        <span class="step-num">NGÀY N1 (MỐC)</span>
+                        <span class="step-badge" id="tracker-n1-badge">Đang tải...</span>
+                    </div>
+                    <div class="step-date" id="tracker-n1-date">Thứ Năm (24/09/2026)</div>
+                    <div class="step-tier text-emerald">Tầng 1: Dàn 60 Số Gốc</div>
+                    <div class="step-info" id="tracker-n1-info">Đề về: --</div>
+                </div>
+
+                <div class="cycle-step-card glass" id="tracker-card-n2">
+                    <div class="step-card-header">
+                        <span class="step-num">NGÀY N2</span>
+                        <span class="step-badge" id="tracker-n2-badge">Đang tải...</span>
+                    </div>
+                    <div class="step-date" id="tracker-n2-date">Thứ Sáu (25/09/2026)</div>
+                    <div class="step-tier text-purple">Tầng 2: Dàn Siêu Lọc 36 Số</div>
+                    <div class="step-info" id="tracker-n2-info">Đang theo dõi</div>
+                </div>
+
+                <div class="cycle-step-card glass" id="tracker-card-n3">
+                    <div class="step-card-header">
+                        <span class="step-num">NGÀY N3</span>
+                        <span class="step-badge" id="tracker-n3-badge">Đang tải...</span>
+                    </div>
+                    <div class="step-date" id="tracker-n3-date">Thứ Bảy (26/09/2026)</div>
+                    <div class="step-tier text-amber">Tầng 3: Dàn Chốt Khung 36 Số</div>
+                    <div class="step-info" id="tracker-n3-info">Dự phòng nếu N2 trượt</div>
+                </div>
+            </div>
+
             <!-- Number Grid Presentation (Dàn 60 số N1) -->
-            <div class="number-grid-container glass">
+            <div class="number-grid-container glass" style="margin-top: 14px;">
                 <div class="card-header">
                     <div>
-                        <h3><i class="fa-solid fa-dice-six text-emerald"></i> Tầng 1: Dàn Gốc 60 Số N1 — ĐÁNH NGÀY MỚI (N1)</h3>
-                        <span class="badge-date-tag text-emerald">🎯 ĐÁNH CHÍNH NGÀY N1: <strong id="grid60-n1-date">Thứ Ba (01/09/2026)</strong></span>
+                        <h3><i class="fa-solid fa-dice-six text-emerald"></i> Tầng 1: Dàn Gốc 60 Số N1 — MỐC KHUNG <span id="t2-grid60-anchor-lbl">24/09/2026</span></h3>
+                        <span class="badge-date-tag text-emerald">🎯 ĐÁNH NGÀY N1: <strong id="grid60-n1-date">Thứ Năm (24/09/2026)</strong></span>
+                        <span class="badge" id="grid60-n1-result-badge" style="margin-left: 8px;"></span>
                     </div>
                     <div class="grid-legend">
                         <span class="legend-item"><span class="dot gaussian"></span> Top Gaussian (Hỏa lực)</span>
@@ -281,26 +334,28 @@
             <!-- Phương Án Tối Ưu N2 (36 Số) & N3 (36 Số) -->
             <div class="lowering-section grid-3" style="margin-top: 20px;">
                 <!-- Top 36 (N2) -->
-                <div class="card glass">
+                <div class="card glass" id="card-tier2-n2">
                     <div class="card-header">
                         <div>
                             <h3><i class="fa-solid fa-filter text-purple"></i> Tầng 2: Dàn Siêu Lọc 36 Số (N2)</h3>
-                            <span class="badge-date-tag text-purple">⚡ ĐÁNH NGÀY 2 (N2): <strong id="grid36-n2-date">Thứ Tư (02/09/2026)</strong></span>
+                            <span class="badge-date-tag text-purple">⚡ ĐÁNH NGÀY 2 (N2): <strong id="grid36-n2-date">Thứ Sáu (25/09/2026)</strong></span>
+                            <span class="badge" id="grid36-n2-result-badge" style="margin-left: 6px;"></span>
                         </div>
                         <button class="btn btn-sm btn-outline" id="btn-copy-36"><i class="fa-regular fa-copy"></i> Copy 36 Số N2</button>
                     </div>
-                    <p class="card-desc"><strong>TỐI ƯU MẬT ĐỘ AI (N2)</strong>: Giữ chuẩn 36 số nhưng tập trung vào 36 con số có điểm AI nổ nhiệt nhất cho Ngày 2 khi N1 trượt.</p>
+                    <p class="card-desc"><strong>TỐI ƯU MẬT ĐỘ AI (N2)</strong>: Giữ chuẩn 36 số có điểm AI nổ cao nhất của mốc khung hiện tại cho Ngày 2 khi N1 trượt.</p>
                     <div class="number-tags-container" id="grid-36-numbers">
                         <!-- Rendered by JS -->
                     </div>
                 </div>
 
                 <!-- Top 36 (N3) -->
-                <div class="card glass">
+                <div class="card glass" id="card-tier3-n3">
                     <div class="card-header">
                         <div>
                             <h3><i class="fa-solid fa-shield-cat text-amber"></i> Tầng 3: Dàn Siêu Lọc 36 Số (N3)</h3>
-                            <span class="badge-date-tag text-amber">🔥 ĐÁNH NGÀY 3 (N3): <strong id="grid36-n3-date">Thứ Năm (03/09/2026)</strong></span>
+                            <span class="badge-date-tag text-amber">🔥 ĐÁNH NGÀY 3 (N3): <strong id="grid36-n3-date">Thứ Bảy (26/09/2026)</strong></span>
+                            <span class="badge" id="grid36-n3-result-badge" style="margin-left: 6px;"></span>
                         </div>
                         <button class="btn btn-sm btn-outline" id="btn-copy-n3"><i class="fa-regular fa-copy"></i> Copy 36 Số N3</button>
                     </div>
@@ -315,11 +370,11 @@
                     <div class="card-header">
                         <div>
                             <h3><i class="fa-solid fa-fire text-danger"></i> Dàn Hỏa Lực Top 20 (Super-Score)</h3>
-                            <span class="badge-date-tag text-danger">🚀 ĐÁNH KHUNG MỚI (N1): <strong id="grid20-n1-date">Thứ Ba (01/09/2026)</strong></span>
+                            <span class="badge-date-tag text-danger">🚀 ĐÁNH HỎA LỰC: <strong id="grid20-n1-date">Thứ Năm (24/09/2026)</strong></span>
                         </div>
                         <button class="btn btn-sm btn-outline" id="btn-copy-20"><i class="fa-regular fa-copy"></i> Copy Top 20</button>
                     </div>
-                    <p class="card-desc">Top 20 số có điểm đồng thuận cao nhất để đánh hỏa lực chính cho <strong>Ngày N1</strong>.</p>
+                    <p class="card-desc">Top 20 số có điểm đồng thuận cao nhất của mốc khung hiện tại để đánh gia tăng hỏa lực.</p>
                     <div class="number-tags-container" id="grid-20-numbers">
                         <!-- Rendered by JS -->
                     </div>
@@ -333,7 +388,7 @@
                     <div class="card-header">
                         <div>
                             <h3><i class="fa-solid fa-cubes text-amber"></i> Top 20 Ba Càng (3D) Mạnh Nhất</h3>
-                            <span class="badge-date-tag text-amber">🎯 ĐÁNH NGÀY N1: <strong id="grid3d-n1-date">Thứ Ba (01/09/2026)</strong></span>
+                            <span class="badge-date-tag text-amber">🎯 MỐC KHUNG: <strong id="grid3d-n1-date">24/09/2026</strong></span>
                         </div>
                         <button class="btn btn-sm btn-outline" id="btn-copy-3d"><i class="fa-regular fa-copy"></i> Copy Top 3D</button>
                     </div>
@@ -347,7 +402,7 @@
                     <div class="card-header">
                         <div>
                             <h3><i class="fa-solid fa-shield-halved text-cyan"></i> Top 20 Bốn Càng (4D) Mạnh Nhất</h3>
-                            <span class="badge-date-tag text-cyan">🎯 ĐÁNH NGÀY N1: <strong id="grid4d-n1-date">Thứ Ba (01/09/2026)</strong></span>
+                            <span class="badge-date-tag text-cyan">🎯 MỐC KHUNG: <strong id="grid4d-n1-date">24/09/2026</strong></span>
                         </div>
                         <button class="btn btn-sm btn-outline" id="btn-copy-4d"><i class="fa-regular fa-copy"></i> Copy Top 4D</button>
                     </div>
@@ -358,52 +413,71 @@
             </div>
         </section>
 
-        <!-- TAB 3 MỚI: DÀN KẾ TIẾP & TÙY CHỌN KHUNG N1 / N2 / N3 -->
+        <!-- TAB 3: KHUNG KẾ TIẾP (LINH HOẠT - TÙY CHỌN THAM KHẢO) -->
         <section id="tab-next-day" class="tab-content">
             <div class="results-header glass">
                 <div>
-                    <h2><i class="fa-solid fa-sliders text-cyan"></i> Dàn Kế Tiếp Cho Ngày Tiếp Theo — Bảng Tùy Chọn Linh Hoạt (N1 / N2 / N3)</h2>
-                    <p>Ngày đánh tiếp theo: <strong class="text-emerald" id="next-tab-date-lbl">Thứ Ba (01/09/2026)</strong> — Chọn chế độ dàn số bạn muốn sử dụng:</p>
+                    <h2><i class="fa-solid fa-boxes-stacked text-amber"></i> Tab 3: KHUNG KẾ TIẾP (Linh Hoạt — Tùy Chọn Tham Khảo)</h2>
+                    <p>Kho dự phòng cho chu kỳ tiếp theo: <strong class="text-amber" id="t3-anchor-cycle-lbl">Mốc 25/09/2026</strong> (N1: <span id="t3-sub-n1">25/9</span> ➔ N2: <span id="t3-sub-n2">26/9</span> ➔ N3: <span id="t3-sub-n3">27/9</span>). Tham khảo bất cứ lúc nào mà không ảnh hưởng đến Tab 2.</p>
                 </div>
                 <div class="results-actions">
                     <button class="btn btn-primary" id="btn-copy-selected-mode">
-                        <i class="fa-regular fa-copy"></i> Copy Dàn Đã Chọn
+                        <i class="fa-regular fa-copy"></i> Copy Dàn Đang Chọn
                     </button>
                 </div>
             </div>
 
-            <!-- Mode Selector Switches -->
-            <div class="mode-selector-grid grid-3" style="margin-top: 20px;">
+            <!-- Info Alert: Tab 3 Role -->
+            <div class="glass" style="padding: 14px 20px; border-left: 4px solid var(--accent-amber); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 8px;">
+                <div style="font-size: 0.88rem; color: var(--text-secondary); max-width: 850px;">
+                    <strong class="text-amber"><i class="fa-solid fa-circle-info"></i> VAI TRÒ TAB 3:</strong> Đóng vai trò như <strong>"Kho dự phòng"</strong>. Người dùng có thể tùy chọn toggle xem dàn N1, N2, N3 của chu kỳ tiếp theo để chủ động nguồn vốn hoặc tham khảo trước mà hoàn toàn không làm xáo trộn Khung đang theo dõi ở Tab 2.
+                </div>
+                <div class="badge badge-purple" style="font-size: 0.8rem; padding: 6px 12px;">
+                    <i class="fa-solid fa-bolt"></i> Tự Động Dịch Lên Tab 2 Khi NỔ
+                </div>
+            </div>
+
+            <!-- Mode Selector Switches (N1 Tham Khảo, N2 Dự Phòng, N3 Dự Phòng) -->
+            <div class="mode-selector-grid grid-3" style="margin-top: 14px;">
                 <div class="mode-card glass active" id="mode-card-n1" data-mode="n1">
                     <div class="mode-header">
-                        <span class="badge badge-success">LỰA CHỌN 1 (KHUYÊN DÙNG)</span>
-                        <h3>🎯 Đánh Khung Mới (N1)</h3>
+                        <span class="badge badge-success">LỰA CHỌN 1 (THAM KHẢO)</span>
+                        <h3>🎯 N1 (Tham Khảo)</h3>
                     </div>
                     <div class="mode-body">
                         <div class="mode-size text-emerald">60 SỐ GỐC</div>
-                        <p class="mode-desc">Phù hợp khi kỳ trước đã nổ (Reset Khung Mới). Phủ rộng an toàn tối đa.</p>
+                        <p class="mode-desc">Xem dàn N1 của ngày <strong id="t3-desc-n1-date">25/09</strong>. Phù hợp khi kỳ trước đã nổ (Reset Khung Mới).</p>
+                    </div>
+                    <div class="mode-footer">
+                        <span class="badge-date-tag text-emerald"><i class="fa-solid fa-calendar-check"></i> Đánh Ngày N1: <strong id="t3-btn-n1-date">25/09/2026</strong></span>
                     </div>
                 </div>
 
                 <div class="mode-card glass" id="mode-card-n2" data-mode="n2">
                     <div class="mode-header">
-                        <span class="badge badge-purple">LỰA CHỌN 2</span>
-                        <h3>⚡ Đánh Nối Khung (N2)</h3>
+                        <span class="badge badge-purple">LỰA CHỌN 2 (DỰ PHÒNG)</span>
+                        <h3>⚡ N2 (Dự Phòng)</h3>
                     </div>
                     <div class="mode-body">
                         <div class="mode-size text-purple">36 SỐ SIÊU LỌC</div>
-                        <p class="mode-desc">Tối ưu mật độ AI nổ cao cho Ngày 2 khi N1 trượt hoặc muốn đánh tinh gọn.</p>
+                        <p class="mode-desc">Xem dàn N2 của mốc <strong id="t3-desc-anchor-n2">25/09</strong> (để đánh cho ngày <strong id="t3-desc-n2-date">26/09</strong> nếu N1 trượt).</p>
+                    </div>
+                    <div class="mode-footer">
+                        <span class="badge-date-tag text-purple"><i class="fa-solid fa-shield"></i> Đánh Ngày N2: <strong id="t3-btn-n2-date">26/09/2026</strong></span>
                     </div>
                 </div>
 
                 <div class="mode-card glass" id="mode-card-n3" data-mode="n3">
                     <div class="mode-header">
-                        <span class="badge badge-amber">LỰA CHỌN 3</span>
-                        <h3>🔥 Đánh Chốt Khung (N3)</h3>
+                        <span class="badge badge-amber">LỰA CHỌN 3 (DỰ PHÒNG)</span>
+                        <h3>🔥 N3 (Dự Phòng)</h3>
                     </div>
                     <div class="mode-body">
                         <div class="mode-size text-amber">36 SỐ HỎA LỰC</div>
-                        <p class="mode-desc">Tối ưu hỏa lực chốt khung Ngày 3 khi N1&amp;N2 chưa nổ hoặc muốn đánh vốn lớn.</p>
+                        <p class="mode-desc">Xem dàn N3 của mốc <strong id="t3-desc-anchor-n3">25/09</strong> (để đánh cho ngày <strong id="t3-desc-n3-date">27/09</strong> nếu N2 trượt).</p>
+                    </div>
+                    <div class="mode-footer">
+                        <span class="badge-date-tag text-amber"><i class="fa-solid fa-fire"></i> Đánh Ngày N3: <strong id="t3-btn-n3-date">27/09/2026</strong></span>
                     </div>
                 </div>
             </div>
@@ -413,12 +487,34 @@
                 <div class="card-header">
                     <div>
                         <h3 id="selected-mode-title"><i class="fa-solid fa-fire text-amber"></i> Danh Sách Dàn Số Đã Chọn (Khung Mới N1 - 60 Số)</h3>
-                        <span class="badge-date-tag text-emerald">🎯 ĐÁNH NGÀY HÔM SAU: <strong id="selected-mode-date">Thứ Ba (01/09/2026)</strong></span>
+                        <span class="badge-date-tag text-emerald">🎯 ĐÁNH NGÀY: <strong id="selected-mode-date">Thứ Sáu (25/09/2026)</strong></span>
+                        <span class="badge badge-primary" id="selected-mode-count-badge" style="margin-left: 8px;">60 Số</span>
                     </div>
                     <button class="btn btn-sm btn-primary" id="btn-copy-mode-inner"><i class="fa-regular fa-copy"></i> Sao Chép Dàn Này</button>
                 </div>
                 <div class="number-tags-container" id="grid-selected-mode-numbers">
                     <!-- Dynamic rendering by JS based on selected mode -->
+                </div>
+            </div>
+
+            <!-- Auto-Shift Mechanism Explanation Box -->
+            <div class="card glass" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-arrows-spin text-cyan"></i> Cơ Chế "Tự Dịch Ngày" (Auto-Shift) — Chỉ Kích Hoạt Khi NỔ</h3>
+                </div>
+                <div class="grid-3" style="gap: 16px; margin-top: 10px;">
+                    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 16px;">
+                        <h4 style="color: var(--accent-emerald); font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-check-double"></i> NỔ Ngày N1</h4>
+                        <p style="font-size: 0.84rem; color: var(--text-secondary);">Tự động chốt sổ chu kỳ hiện tại. Chuyển dàn N1 của ngày tiếp theo (từ Tab 3) lên làm Khung hiện tại (Tab 2) cho chu kỳ mới.</p>
+                    </div>
+                    <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: var(--radius-md); padding: 16px;">
+                        <h4 style="color: var(--accent-purple); font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-bullseye"></i> NỔ Ngày N2</h4>
+                        <p style="font-size: 0.84rem; color: var(--text-secondary);">Tự động chốt sổ chu kỳ hiện tại. Chuyển dàn N1 của ngày tiếp sau ngày nổ N2 (từ Tab 3) lên làm Khung hiện tại (Tab 2).</p>
+                    </div>
+                    <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: var(--radius-md); padding: 16px;">
+                        <h4 style="color: var(--accent-rose); font-size: 0.95rem; margin-bottom: 6px;"><i class="fa-solid fa-triangle-exclamation"></i> TRƯỢT Cả 3 Ngày</h4>
+                        <p style="font-size: 0.84rem; color: var(--text-secondary);">Hệ thống chỉ tự động dịch ngày sau khi ngày N3 kết thúc, kèm thông báo rõ ràng: <em>"Chu kỳ thất bại, chuyển sang chu kỳ kế tiếp"</em>.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -579,6 +675,6 @@
         <span id="toast-msg">Đã sao chép dàn số!</span>
     </div>
 
-    <script src="app.js?v=20260924183514"></script>
+    <script src="app.js?v=20260925121027"></script>
 </body>
 </html>

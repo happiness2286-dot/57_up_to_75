@@ -781,6 +781,158 @@ body {
 .mode-size { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; margin: 4px 0; }
 .mode-desc { font-size: 0.82rem; color: var(--text-secondary); }
 
+/* Badges Extension */
+.badge-warning { background: rgba(245, 158, 11, 0.18); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+.badge-danger { background: rgba(244, 63, 94, 0.18); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.4); }
+.badge-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--border-color); }
+.badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.4); }
+
+.btn-emerald {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+.btn-emerald:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+}
+
+/* Tab 2: Control Panel & Date Picker */
+.tab2-control-panel {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    margin-bottom: 8px;
+}
+
+.picker-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.date-picker-input {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(99, 102, 241, 0.45);
+    color: var(--text-primary);
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 700;
+    outline: none;
+    transition: var(--transition-fast);
+    cursor: pointer;
+    color-scheme: dark;
+}
+
+.date-picker-input:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 14px rgba(6, 182, 212, 0.35);
+}
+
+.quick-select {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    color-scheme: dark;
+    transition: var(--transition-fast);
+}
+
+.quick-select:focus {
+    border-color: var(--accent-indigo);
+}
+
+.picker-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* 3-Day Cycle Tracker Bar */
+.cycle-tracker-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.cycle-step-card {
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cycle-step-card.active-step {
+    border-color: rgba(245, 158, 11, 0.6);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(22, 27, 34, 0.85));
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.2);
+}
+
+.step-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.step-num {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.step-date {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.step-tier {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.step-info {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.pulse-border {
+    animation: pulseBorder 2s infinite ease-in-out;
+}
+
+@keyframes pulseBorder {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
 /* Footer */
 .main-footer {
     text-align: center;
@@ -881,9 +1033,25 @@ body {
     .grid-3,
     .grid-2,
     .analytics-grid,
-    .mode-selector-grid {
+    .mode-selector-grid,
+    .cycle-tracker-bar {
         grid-template-columns: 1fr !important;
         gap: 12px !important;
+    }
+
+    .tab2-control-panel {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+    }
+    .picker-group, .picker-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .date-picker-input, .quick-select {
+        width: 100%;
     }
 
     /* Number Grid 60 numbers on Mobile */
