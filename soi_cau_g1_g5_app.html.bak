@@ -603,58 +603,6 @@
         }
         .num-badge-top4-star:hover { transform: scale(1.08); }
 
-        /* NÚT VÀ GIAO DIỆN KIỂM TRA KỊCH BẢN DÀN ĐỘNG G5.6 */
-        .btn-scenario {
-            background: rgba(30, 41, 59, 0.85);
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            padding: 6px 13px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-scenario:hover {
-            background: rgba(51, 65, 85, 0.95);
-            color: #f8fafc;
-            border-color: rgba(251, 191, 36, 0.4);
-            transform: translateY(-1px);
-        }
-        .btn-scenario.btn-scenario-active {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.4) 100%);
-            color: #fbbf24;
-            border-color: rgba(251, 191, 36, 0.8);
-            box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
-        }
-        .waiting-badge-ph {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #cbd5e1;
-            background: rgba(148, 163, 184, 0.12);
-            border: 1px dashed rgba(148, 163, 184, 0.35);
-        }
-        .drawing-badge-ph {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #fbbf24;
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px dashed rgba(245, 158, 11, 0.45);
-        }
-
         /* PHẦN 2: DÀN SỐ TINH TÚY */
         .tinh-tuy-box {
             background: linear-gradient(145deg, rgba(251, 191, 36, 0.05) 0%, rgba(15, 23, 42, 0.95) 70%);
@@ -1518,42 +1466,17 @@
         </div>
 
         
-        <!-- THANH ĐIỀU KHIỂN & KIỂM TRA 3 KỊCH BẢN (CHỈ HIỆN KHI CÓ ?test=1) -->
-        <div class="test-scenario-bar" id="test-scenario-bar" style="display: none; margin-bottom: 18px; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge-v2" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4);"><i class="fa-solid fa-flask"></i> TEST MODE (?test=1)</span>
-                <span style="font-size: 12px; font-weight: 700; color: #f1f5f9;">Kiểm tra 3 kịch bản hiển thị dàn:</span>
-            </div>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="test-btn-group">
-                <button type="button" class="btn-scenario" id="btn-mock-before" onclick="setMockStage('before_18h15')">
-                    <i class="fa-solid fa-clock"></i> 1. Trước 18h15 (Ẩn dàn)
-                </button>
-                <button type="button" class="btn-scenario" id="btn-mock-drawing" onclick="setMockStage('drawing_18h15_18h22')">
-                    <i class="fa-solid fa-bolt"></i> 2. 18h15-18h22 (Đang quay G1→G5.5)
-                </button>
-                <button type="button" class="btn-scenario" id="btn-mock-after" onclick="setMockStage('after_g5_6')">
-                    <i class="fa-solid fa-lock"></i> 3. Sau G5.6 (Hiện dàn & Khóa)
-                </button>
-                <button type="button" class="btn-scenario btn-scenario-active" id="btn-mock-auto" onclick="setMockStage('auto')">
-                    <i class="fa-solid fa-rotate"></i> Tự động (Theo giờ thực)
-                </button>
-            </div>
-        </div>
-        
-        <!-- PHẦN 0: BẢNG DÀN ĐỘNG CHỐT THEO G5.6 -->
+        <!-- PHẦN 0: BẢNG CHỐT DÀN TĨNH 4 CẤP (ĐÁNH TRƯỚC 18H15) -->
         <section class="section-box" id="section-dan-tinh" style="border: 1px solid rgba(251, 191, 36, 0.4); box-shadow: 0 0 25px rgba(251, 191, 36, 0.12); margin-bottom: 22px;">
             <div class="section-header" style="border-bottom: 1px solid rgba(251, 191, 36, 0.25); padding-bottom: 14px;">
                 <h2>
                     <i class="fa-solid fa-crown" style="color: #fbbf24; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));"></i> 
-                    PHẦN 0: DÀN SỐ ĐỘNG CHỐT THEO G5.6 (<span id="txt-tinh-date" style="color: #67e8f9;">25/09/2026</span>)
+                    PHẦN 0: BẢNG CHỐT DÀN TĨNH 4 CẤP (<span id="txt-tinh-date" style="color: #67e8f9;">25/09/2026</span>)
                 </h2>
                 <span class="tag-info" id="txt-tinh-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); font-weight: 700;">
-                    <i class="fa-solid fa-circle-check"></i> ĐANG HIỆU LỰC
+                    <i class="fa-solid fa-circle-check"></i> ĐANG HIỆU LỰC (VÀO TIỀN TRƯỚC 18H15)
                 </span>
             </div>
-
-            <!-- Banner thông báo khóa chốt G5.6 -->
-            <div id="banner-g56-alert" style="margin-top: 14px;"></div>
 
             <!-- TẦNG 4: HỎA LỰC BẠCH THỦ & TỨ THỦ -->
             <div class="tier-row" style="background: linear-gradient(90deg, rgba(251, 191, 36, 0.08) 0%, rgba(15, 23, 42, 0.4) 100%); padding: 14px 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(251, 191, 36, 0.2);">
@@ -2073,16 +1996,6 @@
         let currentData = DEFAULT_PAYLOAD;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Kiểm tra query param ?test=1 để bật thanh Test Bar (mặc định ẩn trong production)
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const isTestMode = urlParams.get('test') === '1' || urlParams.get('test') === 'true';
-                const testBar = document.getElementById('test-scenario-bar');
-                if (testBar) {
-                    testBar.style.display = isTestMode ? 'flex' : 'none';
-                }
-            } catch (e) {}
-
             loadLiveData();
             loadLichSu();
 
@@ -2205,90 +2118,12 @@
         }
         window.loadLichSu = loadLichSu;
 
-        // =========================================================================
-        // HỆ THỐNG QUẢN LÝ DÀN ĐỘNG THEO TIẾN ĐỘ QUAY (CHỈ HIỂN THỊ SAU KHI CÓ G5.6)
-        // =========================================================================
-        let isDanReady = false;
-        let currentMockStage = 'auto'; // 'auto', 'before_18h15', 'drawing_18h15_18h22', 'after_g5_6'
-
-        function checkIsDanReady(data) {
-            // Kiểm tra xem có đang kích hoạt chế độ test (?test=1) không
-            let isTestMode = false;
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                isTestMode = urlParams.get('test') === '1' || urlParams.get('test') === 'true';
-                if (isTestMode) {
-                    const mock = urlParams.get('mock_stage') || urlParams.get('stage');
-                    if (mock === 'before_18h15' || mock === '1') {
-                        return { isReady: false, stage: 'BEFORE_18H15', hasG5_6: false };
-                    }
-                    if (mock === 'drawing_18h15_18h22' || mock === '2' || mock === 'drawing') {
-                        return { isReady: false, stage: 'DRAWING_REALTIME', hasG5_6: false };
-                    }
-                    if (mock === 'after_g5_6' || mock === '3' || mock === 'after') {
-                        return { isReady: true, stage: 'LOCKED_G5_6', hasG5_6: true };
-                    }
-                }
-            } catch (e) {}
-
-            // Chỉ áp dụng mock khi đang ở chế độ test (?test=1)
-            if (isTestMode && currentMockStage !== 'auto') {
-                if (currentMockStage === 'before_18h15') {
-                    return { isReady: false, stage: 'BEFORE_18H15', hasG5_6: false };
-                }
-                if (currentMockStage === 'drawing_18h15_18h22') {
-                    return { isReady: false, stage: 'DRAWING_REALTIME', hasG5_6: false };
-                }
-                if (currentMockStage === 'after_g5_6') {
-                    return { isReady: true, stage: 'LOCKED_G5_6', hasG5_6: true };
-                }
-            }
-
-            // Kiểm tra giải G5.6 trong dữ liệu thực tế
-            const lp = (data && data.live_prizes) ? data.live_prizes : {};
-            const g5 = lp.g5 || [];
-            // G5.6 là phần tử thứ 6 (index 5) của giải G5
-            const hasG5_6 = Boolean(
-                Array.isArray(g5) &&
-                g5.length >= 6 &&
-                g5[5] &&
-                String(g5[5]).trim().length >= 4 &&
-                !String(g5[5]).includes('•')
-            );
-            const isG5Finished = Boolean(
-                data && (data.is_g5_finished === true || (data.filled_count !== undefined && data.filled_count >= 19))
-            );
-
-            // Thời gian hiện tại theo hệ thống
-            const now = new Date();
-            const curMinutes = now.getHours() * 60 + now.getMinutes();
-
-            // Nếu G5.6 đã xuất hiện hoặc đợt quay đã hoàn tất
-            if (hasG5_6 || isG5Finished) {
-                return { isReady: true, stage: 'LOCKED_G5_6', hasG5_6: true };
-            }
-
-            // YÊU CẦU 4: Nếu G5.6 chưa có lúc 18h24 (1104 phút)
-            if (curMinutes >= 1104 && curMinutes < 1140) {
-                console.warn("⚠️ [18H24 CẢNH BÁO] G5.6 chưa có lúc 18h24. Chốt dàn cứng với dữ liệu hiện có!");
-                return { isReady: true, stage: 'FORCED_18H24', hasG5_6: false, isForced: true };
-            }
-
-            // YÊU CẦU 1: Trước 18h15 (1095 phút)
-            if (curMinutes < 1095) {
-                return { isReady: false, stage: 'BEFORE_18H15', hasG5_6: false };
-            }
-
-            // YÊU CẦU 2: Từ 18h15 - 18h22 (và chưa có G5.6)
-            return { isReady: false, stage: 'DRAWING_REALTIME', hasG5_6: false };
-        }
-
-        async function fetchData() {
+        async function loadLiveData() {
             try {
                 const res = await fetch('ket_qua_soi_cau_g1_g5.json?t=' + Date.now());
                 if (res.ok) {
                     const json = await res.json();
-                    if (json && (json.top_1 || json.target_date || json.live_prizes)) {
+                    if (json && (json.top_1 || json.target_date)) {
                         currentData = json;
                     }
                 }
@@ -2296,29 +2131,18 @@
                 console.warn('Dùng dữ liệu dự phòng cục bộ:', err);
             }
 
-            // Đánh giá trạng thái dàn động
-            const status = checkIsDanReady(currentData);
-            isDanReady = status.isReady;
-            window.isDanReady = isDanReady;
-
-            renderApp(currentData, status);
+            renderApp(currentData);
             setupCopyButtons();
-            return currentData;
         }
 
-        // Tương thích ngược với loadLiveData
-        const loadLiveData = fetchData;
-        window.fetchData = fetchData;
-        window.loadLiveData = fetchData;
+        // Expose ra window để hỗ trợ cả 3 giải pháp (fetchData, renderApp, WebSocket)
+        window.fetchData = loadLiveData;
         window.renderApp = renderApp;
 
-        function renderDanTinh(dt, status) {
-            if (!status) status = checkIsDanReady(currentData);
-            isDanReady = status.isReady;
-            window.isDanReady = isDanReady;
-
+        
+        function renderDanTinh(dt) {
             if (!dt) {
-                dt = (currentData && currentData.dan_tinh_4cap) ? currentData.dan_tinh_4cap : {
+                dt = {
                     target_date: "Thứ sáu ngày 25-09-2026",
                     bach_thu: "41",
                     song_thu: ["41", "14"],
@@ -2343,158 +2167,58 @@
             }
 
             const txtDate = document.getElementById('txt-tinh-date');
-            if (txtDate) txtDate.textContent = dt.target_date || (currentData ? currentData.target_date : '27/09/2026');
+            if (txtDate) txtDate.textContent = dt.target_date || '27/09/2026';
 
             const txtBadge = document.getElementById('txt-tinh-badge');
-            const bannerAlert = document.getElementById('banner-g56-alert');
+            if (txtBadge && dt.status_text) {
+                txtBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${dt.status_text}`;
+            }
+
             const elBt = document.getElementById('badge-tinh-bt');
-            const btnBt = document.getElementById('btn-copy-tinh-bt');
-            const elSt = document.getElementById('badge-tinh-st');
-            const btnSt = document.getElementById('btn-copy-tinh-st');
-            const elTt = document.getElementById('badge-tinh-tt');
-            const btnTt = document.getElementById('btn-copy-tinh-tt');
-            const metaDan9 = document.getElementById('txt-tinh-dan9-meta');
-            const grid9 = document.getElementById('tinh-grid-dan9');
-            const grid38 = document.getElementById('tinh-grid-dan38');
-            const grid60 = document.getElementById('tinh-grid-dan60');
-
-            // XỬ LÝ 3 KỊCH BẢN THEO YÊU CẦU:
-            if (!status.isReady) {
-                // KỊCH BẢN 1: Trước 18h15
-                if (status.stage === 'BEFORE_18H15') {
-                    if (txtBadge) {
-                        txtBadge.innerHTML = `<i class="fa-solid fa-clock"></i> ⏳ CHỜ GIỜ QUAY (18H15)`;
-                        txtBadge.style.background = 'rgba(148, 163, 184, 0.15)';
-                        txtBadge.style.color = '#cbd5e1';
-                        txtBadge.style.borderColor = 'rgba(148, 163, 184, 0.4)';
-                    }
-                    if (bannerAlert) {
-                        bannerAlert.innerHTML = `
-                            <div style="background: rgba(15, 23, 42, 0.9); border: 1px dashed rgba(251, 191, 36, 0.5); padding: 12px 16px; border-radius: 10px; text-align: center; color: #fbbf24; font-weight: 700; font-size: 13px;">
-                                <i class="fa-solid fa-clock fa-spin" style="margin-right: 6px;"></i> ⏳ CHỜ GIỜ QUAY (18H15) — Dàn số tự động khóa chốt sau khi có kết quả G5.6!
-                            </div>
-                        `;
-                    }
-                    if (elBt) { elBt.innerHTML = `<span class="waiting-badge-ph"><i class="fa-solid fa-clock"></i> ⏳</span>`; elBt.onclick = null; }
-                    if (btnBt) { btnBt.innerHTML = `<i class="fa-solid fa-clock"></i> ⏳ Chờ 18h15`; }
-                    if (elSt) { elSt.innerHTML = `<span class="waiting-badge-ph"><i class="fa-solid fa-clock"></i> ⏳ Chờ 18h15</span>`; elSt.onclick = null; }
-                    if (btnSt) { btnSt.innerHTML = `<i class="fa-solid fa-clock"></i> ⏳ Chờ 18h15`; }
-                    if (elTt) { elTt.innerHTML = `<span class="waiting-badge-ph"><i class="fa-solid fa-clock"></i> ⏳ Chờ 18h15</span>`; elTt.onclick = null; }
-                    if (btnTt) { btnTt.innerHTML = `<i class="fa-solid fa-clock"></i> ⏳ Chờ 18h15`; }
-
-                    if (grid9) {
-                        grid9.innerHTML = `<div style="color: #94a3b8; font-size: 12.5px; font-weight: 600; padding: 8px 4px;"><i class="fa-solid fa-clock"></i> ⏳ CHỜ GIỜ QUAY (18H15) — KHÔNG hiển thị dàn số trước giờ quay</div>`;
-                    }
-                    if (grid38) {
-                        grid38.innerHTML = `<div style="color: #94a3b8; font-size: 12px; font-weight: 600; padding: 6px 4px;"><i class="fa-solid fa-clock"></i> ⏳ CHỜ GIỜ QUAY (18H15)</div>`;
-                    }
-                    if (grid60) {
-                        grid60.innerHTML = `<div style="color: #94a3b8; font-size: 12px; font-weight: 600; padding: 6px 4px;"><i class="fa-solid fa-clock"></i> ⏳ CHỜ GIỜ QUAY (18H15)</div>`;
-                    }
-                } 
-                // KỊCH BẢN 2: Từ 18h15 - 18h22 (Đang quay G1->G5.5, chưa có G5.6)
-                else {
-                    if (txtBadge) {
-                        txtBadge.innerHTML = `<i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...`;
-                        txtBadge.style.background = 'rgba(245, 158, 11, 0.2)';
-                        txtBadge.style.color = '#fbbf24';
-                        txtBadge.style.borderColor = 'rgba(245, 158, 11, 0.5)';
-                    }
-                    if (bannerAlert) {
-                        bannerAlert.innerHTML = `
-                            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.45); padding: 12px 16px; border-radius: 10px; text-align: center; color: #fde68a; font-weight: 700; font-size: 13px;">
-                                <i class="fa-solid fa-bolt fa-fade" style="color: #fbbf24; margin-right: 6px;"></i> ⚡ ĐANG CẬP NHẬT TỪNG GIẢI REAL-TIME (G1 ➔ G5.5) — KHÔNG hiển thị dàn số cho đến khi xuất hiện G5.6!
-                            </div>
-                        `;
-                    }
-                    if (elBt) { elBt.innerHTML = `<span class="drawing-badge-ph"><i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...</span>`; elBt.onclick = null; }
-                    if (btnBt) { btnBt.innerHTML = `<i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...`; }
-                    if (elSt) { elSt.innerHTML = `<span class="drawing-badge-ph"><i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...</span>`; elSt.onclick = null; }
-                    if (btnSt) { btnSt.innerHTML = `<i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...`; }
-                    if (elTt) { elTt.innerHTML = `<span class="drawing-badge-ph"><i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...</span>`; elTt.onclick = null; }
-                    if (btnTt) { btnTt.innerHTML = `<i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quay...`; }
-
-                    if (grid9) {
-                        grid9.innerHTML = `<div style="color: #fbbf24; font-size: 12.5px; font-weight: 600; padding: 8px 4px;"><i class="fa-solid fa-spinner fa-spin"></i> ⚡ Đang quay... (Đang cập nhật từng giải G1→G5.5, chốt sau G5.6)</div>`;
-                    }
-                    if (grid38) {
-                        grid38.innerHTML = `<div style="color: #fbbf24; font-size: 12px; font-weight: 600; padding: 6px 4px;"><i class="fa-solid fa-spinner fa-spin"></i> ⚡ Đang quay... (Chờ G5.6)</div>`;
-                    }
-                    if (grid60) {
-                        grid60.innerHTML = `<div style="color: #fbbf24; font-size: 12px; font-weight: 600; padding: 6px 4px;"><i class="fa-solid fa-spinner fa-spin"></i> ⚡ Đang quay... (Chờ G5.6)</div>`;
-                    }
-                }
-                return;
-            }
-
-            // KỊCH BẢN 3: KHI G5.6 XUẤT HIỆN HOẶC 18H24 CHỐT CỨNG (isReady === true)
-            if (status.stage === 'FORCED_18H24') {
-                if (txtBadge) {
-                    txtBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ⚠️ ĐÃ CHỐT DÀN DỰ PHÒNG (18H24)`;
-                    txtBadge.style.background = 'rgba(239, 68, 68, 0.2)';
-                    txtBadge.style.color = '#fca5a5';
-                    txtBadge.style.borderColor = 'rgba(239, 68, 68, 0.5)';
-                }
-                if (bannerAlert) {
-                    bannerAlert.innerHTML = `
-                        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.5); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); padding: 12px 16px; border-radius: 10px; text-align: center; color: #fecaca; font-weight: 800; font-size: 13.5px;">
-                            <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; margin-right: 6px;"></i> ⚠️ ĐÃ QUA 18H24 (CHƯA ĐỦ G5.6) — ĐÃ KHÓA CHỐT DÀN CỨNG VỚI DỮ LIỆU HIỆN CÓ! VÀO TIỀN TRƯỚC 18H28!
-                        </div>
-                    `;
-                }
-            } else {
-                if (txtBadge) {
-                    txtBadge.innerHTML = `<i class="fa-solid fa-lock"></i> 🔒 ĐÃ KHÓA CHỐT DÀN (G5.6) - VÀO TIỀN TRƯỚC 18H28!`;
-                    txtBadge.style.background = 'rgba(16, 185, 129, 0.2)';
-                    txtBadge.style.color = '#34d399';
-                    txtBadge.style.borderColor = 'rgba(16, 185, 129, 0.5)';
-                }
-                if (bannerAlert) {
-                    bannerAlert.innerHTML = `
-                        <div style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(245, 158, 11, 0.15) 100%); border: 1px solid rgba(16, 185, 129, 0.6); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; text-align: center; color: #6ee7b7; font-weight: 800; font-size: 13.5px;">
-                            <i class="fa-solid fa-lock" style="color: #34d399; margin-right: 6px;"></i> 🔒 ĐÃ KHÓA CHỐT DÀN (G5.6) - VÀO TIỀN TRƯỚC 18H28!
-                        </div>
-                    `;
-                }
-            }
-
-            // Hiển thị đầy đủ số
             if (elBt) {
                 elBt.textContent = dt.bach_thu || '65';
                 elBt.onclick = () => copyText(dt.bach_thu, 'Đã sao chép Bạch thủ: ' + dt.bach_thu);
             }
+
+            const btnBt = document.getElementById('btn-copy-tinh-bt');
             if (btnBt) {
                 btnBt.innerHTML = `<i class="fa-regular fa-copy"></i> Copy BT ${dt.bach_thu || ''}`;
                 btnBt.onclick = () => copyText(dt.bach_thu, 'Đã sao chép Bạch thủ: ' + dt.bach_thu);
             }
 
-            const stArr = dt.song_thu || [dt.bach_thu || '65', dt.lot_lon || '56'];
+            const elSt = document.getElementById('badge-tinh-st');
+            const stArr = dt.song_thu || ['65', '56'];
             const stStr = stArr.join(' - ');
             if (elSt) {
                 elSt.textContent = stStr;
                 elSt.onclick = () => copyText(stArr.join(', '), 'Đã sao chép Song thủ: ' + stStr);
             }
+
+            const btnSt = document.getElementById('btn-copy-tinh-st');
             if (btnSt) {
-                btnSt.innerHTML = `<i class="fa-regular fa-copy"></i> Copy Song Thủ`;
                 btnSt.onclick = () => copyText(stArr.join(', '), 'Đã sao chép Song thủ: ' + stStr);
             }
 
-            const ttArr = dt.tu_thu || [dt.bach_thu || '65', dt.lot_lon || '56', '22', '21'];
+            const elTt = document.getElementById('badge-tinh-tt');
+            const ttArr = dt.tu_thu || ['65', '56', '22', '21'];
             const ttStr = ttArr.join(' - ');
             if (elTt) {
                 elTt.textContent = ttStr;
                 elTt.onclick = () => copyText(ttArr.join(', '), 'Đã sao chép Tứ thủ: ' + ttStr);
             }
+
+            const btnTt = document.getElementById('btn-copy-tinh-tt');
             if (btnTt) {
-                btnTt.innerHTML = `<i class="fa-regular fa-copy"></i> Copy Tứ Thủ`;
                 btnTt.onclick = () => copyText(ttArr.join(', '), 'Đã sao chép Tứ thủ: ' + ttStr);
             }
 
+            const metaDan9 = document.getElementById('txt-tinh-dan9-meta');
             if (metaDan9 && dt.top_dau && dt.top_duoi) {
                 metaDan9.textContent = `${dt.top_dau.join(', ')} × ${dt.top_duoi.join(', ')}`;
             }
 
             // Dàn 9 số Cội Nguồn
+            const grid9 = document.getElementById('tinh-grid-dan9');
             if (grid9 && dt.dan_9_so) {
                 grid9.innerHTML = dt.dan_9_so.map(n => {
                     const isBt = (n === dt.bach_thu);
@@ -2505,6 +2229,7 @@
             }
 
             // Dàn 38 số Cấp 2
+            const grid38 = document.getElementById('tinh-grid-dan38');
             if (grid38 && dt.dan_cap2_38so) {
                 grid38.innerHTML = dt.dan_cap2_38so.map(n => {
                     const isBt = (n === dt.bach_thu);
@@ -2515,6 +2240,7 @@
             }
 
             // Dàn 60 số Cấp 1
+            const grid60 = document.getElementById('tinh-grid-dan60');
             if (grid60 && dt.dan_60_cap4) {
                 grid60.innerHTML = dt.dan_60_cap4.map(n => {
                     const isBt = (n === dt.bach_thu);
@@ -2524,14 +2250,10 @@
                 }).join(' ');
             }
 
-            // Gán nút sao chép
+            // Gán nút sao chép dàn tĩnh
             const btnCopy9 = document.getElementById('btn-copy-tinh-dan9');
             if (btnCopy9) {
                 btnCopy9.onclick = () => {
-                    if (!isDanReady) {
-                        showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                        return;
-                    }
                     const s = (dt.dan_9_so || []).join(', ');
                     copyText(s, 'Đã sao chép Dàn 9 Số Cội Nguồn: ' + s);
                 };
@@ -2539,10 +2261,6 @@
             const btnCopy38 = document.getElementById('btn-copy-tinh-dan38');
             if (btnCopy38) {
                 btnCopy38.onclick = () => {
-                    if (!isDanReady) {
-                        showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                        return;
-                    }
                     const s = (dt.dan_cap2_38so || []).join(', ');
                     copyText(s, `Đã sao chép Dàn Cấp 2 (${dt.dan_cap2_38so.length} số): ` + s);
                 };
@@ -2550,10 +2268,6 @@
             const btnCopy60 = document.getElementById('btn-copy-tinh-dan60');
             if (btnCopy60) {
                 btnCopy60.onclick = () => {
-                    if (!isDanReady) {
-                        showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                        return;
-                    }
                     const s = (dt.dan_60_cap4 || []).join(', ');
                     copyText(s, `Đã sao chép Dàn Gốc Cấp 1 (${dt.dan_60_cap4.length} số): ` + s);
                 };
@@ -2561,19 +2275,14 @@
         }
         window.renderDanTinh = renderDanTinh;
 
-        function renderApp(data, status) {
+        function renderApp(data) {
             if (data && typeof data === 'object') {
                 currentData = data;
             }
-            if (!status) {
-                status = checkIsDanReady(currentData);
-            }
-            isDanReady = status.isReady;
-            window.isDanReady = isDanReady;
 
             // Header date & progress
             document.getElementById('txt-draw-date').textContent = currentData.target_date || '24/09/2026';
-            renderDanTinh(currentData.dan_tinh_4cap, status);
+            renderDanTinh(currentData.dan_tinh_4cap);
             
             const filled = currentData.filled_count !== undefined ? currentData.filled_count : 19;
             const total = currentData.total_count || 19;
@@ -2604,49 +2313,26 @@
             renderPrizeWithHighlights('live-g4', ['G4.1', 'G4.2', 'G4.3', 'G4.4'], lp.g4 || []);
             renderPrizeWithHighlights('live-g5', ['G5.1', 'G5.2', 'G5.3', 'G5.4', 'G5.5', 'G5.6'], lp.g5 || []);
 
-            // PHẦN 2: DÀN SỐ TINH TÚY (Chỉ hiển thị khi isDanReady === true)
-            const valTop1El = document.getElementById('val-top1');
-            const containerTop4 = document.getElementById('list-top4');
-            const containerTinhTuy = document.getElementById('list-tinhtuy-ngay1');
-            const containerLot = document.getElementById('list-lot');
-
-            if (!status.isReady) {
-                if (status.stage === 'BEFORE_18H15') {
-                    if (valTop1El) valTop1El.textContent = '⏳ Chờ giờ quay (18h15)';
-                    if (containerTop4) {
-                        containerTop4.innerHTML = '<span class="waiting-badge-ph"><i class="fa-solid fa-clock"></i> ⏳ CHỜ GIỜ QUAY (18H15)</span>';
-                    }
-                    if (containerTinhTuy) {
-                        containerTinhTuy.innerHTML = '<span style="color:#94a3b8; font-size:12px;"><i class="fa-solid fa-clock"></i> ⏳ Chờ giờ quay 18h15</span>';
-                    }
-                    if (containerLot) {
-                        containerLot.innerHTML = '<span style="color:#94a3b8; font-size:12px;"><i class="fa-solid fa-clock"></i> ⏳ Chờ giờ quay 18h15</span>';
-                    }
+            // PHẦN 2: DÀN SỐ TINH TÚY
+            // Top 1: Phóng to, viền vàng đậm, kèm hậu tố (3d/4d)
+            let top1Val = currentData.top_1_display || (currentData.top_1 ? `${currentData.top_1} (3d)` : '');
+            if (!top1Val) {
+                if (filled < total) {
+                    top1Val = '⚡ Đang quay... (Chốt sau G5.6)';
                 } else {
-                    if (valTop1El) valTop1El.textContent = '⚡ Đang quay... (Chốt sau G5.6)';
-                    if (containerTop4) {
-                        containerTop4.innerHTML = '<span class="drawing-badge-ph"><i class="fa-solid fa-bolt fa-fade"></i> ⚡ Đang quét vị trí cầu... (Chốt sau G5.6)</span>';
-                    }
-                    if (containerTinhTuy) {
-                        containerTinhTuy.innerHTML = '<span style="color:#fbbf24; font-size:12px;"><i class="fa-solid fa-spinner fa-spin"></i> ⚡ Đang cập nhật từng giải...</span>';
-                    }
-                    if (containerLot) {
-                        containerLot.innerHTML = '<span style="color:#38bdf8; font-size:12px;"><i class="fa-solid fa-spinner fa-spin"></i> ⚡ Đang chờ G5.6 để chốt dàn lót...</span>';
-                    }
+                    top1Val = '--';
                 }
-            } else {
-                // Top 1: Phóng to, viền vàng đậm, kèm hậu tố (3d/4d)
-                let top1Val = currentData.top_1_display || (currentData.top_1 ? `${currentData.top_1} (3d)` : '');
-                if (!top1Val) top1Val = (currentData.dan_tinh_4cap && currentData.dan_tinh_4cap.bach_thu) ? `${currentData.dan_tinh_4cap.bach_thu} (3d)` : '--';
-                if (valTop1El) valTop1El.textContent = top1Val;
+            }
+            document.getElementById('val-top1').textContent = top1Val;
 
-                // Top 4: Thêm dấu sao (★) và hậu tố chu kỳ (3d/4d)
-                let top4List = currentData.top_4_display || (currentData.top_4 || []).map(x => `★ ${x} (3d)`);
-                if (top4List.length === 0 && currentData.dan_tinh_4cap && currentData.dan_tinh_4cap.tu_thu) {
-                    top4List = currentData.dan_tinh_4cap.tu_thu.map(x => `★ ${x} (3d)`);
-                }
-                if (containerTop4) {
-                    containerTop4.innerHTML = '';
+            // Top 4: Thêm dấu sao (★) và hậu tố chu kỳ (3d/4d)
+            let top4List = currentData.top_4_display || (currentData.top_4 || []).map(x => `★ ${x} (3d)`);
+            const containerTop4 = document.getElementById('list-top4');
+            if (containerTop4) {
+                containerTop4.innerHTML = '';
+                if (top4List.length === 0 && filled < total) {
+                    containerTop4.innerHTML = '<span style="color:#fbbf24; font-size:12px; font-weight:700;"><i class="fa-solid fa-bolt fa-fade"></i> Đang quét vị trí cầu... (Chốt sau G5.6)</span>';
+                } else {
                     top4List.forEach(itemStr => {
                         const badge = document.createElement('span');
                         badge.className = 'num-badge-top4-star';
@@ -2655,67 +2341,73 @@
                     });
                 }
             }
-        }
 
-        // HÀM CHUYỂN ĐỔI GIẢ LẬP 3 KỊCH BẢN KIỂM TRA (PC & MOBILE)
-        function setMockStage(stage) {
-            currentMockStage = stage;
-            const btns = {
-                'before_18h15': 'btn-mock-before',
-                'drawing_18h15_18h22': 'btn-mock-drawing',
-                'after_g5_6': 'btn-mock-after',
-                'auto': 'btn-mock-auto'
-            };
-            Object.entries(btns).forEach(([k, id]) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    if (k === stage) el.classList.add('btn-scenario-active');
-                    else el.classList.remove('btn-scenario-active');
+            // Dàn Tinh Túy Ngày 1 (Mới chạm giao thoa 60 số Cấp 4)
+            const tinhtuyList = currentData.dan_ngay_1_tinhtuy || currentData.dan_giao_thoa || [];
+            const containerTinhTuy = document.getElementById('list-tinhtuy-ngay1');
+            if (containerTinhTuy) {
+                containerTinhTuy.innerHTML = '';
+                if (tinhtuyList.length === 0 && filled < total) {
+                    containerTinhTuy.innerHTML = '<span style="color:#94a3b8; font-size:12px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tổng hợp các vị trí nổ...</span>';
+                } else {
+                    tinhtuyList.forEach(itemStr => {
+                        const badge = document.createElement('span');
+                        badge.className = 'num-badge-yellow';
+                        badge.style.borderColor = 'rgba(56, 189, 248, 0.6)';
+                        badge.style.color = '#fff';
+                        badge.textContent = itemStr;
+                        containerTinhTuy.appendChild(badge);
+                    });
                 }
-            });
-
-            if (stage === 'before_18h15') {
-                const mockData = JSON.parse(JSON.stringify(currentData));
-                mockData.live_prizes = { g1: '', g2: [], g3: [], g4: [], g5: [] };
-                mockData.filled_count = 0;
-                mockData.total_count = 19;
-                mockData.is_g5_finished = false;
-                renderApp(mockData, { isReady: false, stage: 'BEFORE_18H15', hasG5_6: false });
-                showToast('🧪 KỊCH BẢN 1: Trước 18h15 ➔ Ẩn dàn số ("⏳ CHỜ GIỜ QUAY")');
-            } else if (stage === 'drawing_18h15_18h22') {
-                const mockData = JSON.parse(JSON.stringify(currentData));
-                mockData.live_prizes = {
-                    g1: (currentData.live_prizes && currentData.live_prizes.g1) || '08389',
-                    g2: (currentData.live_prizes && currentData.live_prizes.g2) || ['72814', '46429'],
-                    g3: (currentData.live_prizes && currentData.live_prizes.g3) || ['61403', '53225', '12186', '68865', '70733', '05305'],
-                    g4: (currentData.live_prizes && currentData.live_prizes.g4) || ['0985', '7902', '1519', '9746'],
-                    g5: ['2966', '2437', '6169', '6077', '5155'] // 5 giải, CHƯA có G5.6
-                };
-                mockData.filled_count = 18;
-                mockData.total_count = 19;
-                mockData.is_g5_finished = false;
-                renderApp(mockData, { isReady: false, stage: 'DRAWING_REALTIME', hasG5_6: false });
-                showToast('🧪 KỊCH BẢN 2: 18h15-18h22 ➔ Cập nhật G1-G5.5, Ẩn dàn ("⚡ Đang quay...")');
-            } else if (stage === 'after_g5_6') {
-                const mockData = JSON.parse(JSON.stringify(currentData));
-                mockData.live_prizes = {
-                    g1: '08389',
-                    g2: ['72814', '46429'],
-                    g3: ['61403', '53225', '12186', '68865', '70733', '05305'],
-                    g4: ['0985', '7902', '1519', '9746'],
-                    g5: ['2966', '2437', '6169', '6077', '5155', '7323'] // ĐÃ CÓ G5.6
-                };
-                mockData.filled_count = 19;
-                mockData.total_count = 19;
-                mockData.is_g5_finished = true;
-                renderApp(mockData, { isReady: true, stage: 'LOCKED_G5_6', hasG5_6: true });
-                showToast('🧪 KỊCH BẢN 3: Xuất hiện G5.6 ➔ Hiện dàn số & Khóa chốt!');
-            } else {
-                fetchData();
-                showToast('🔄 Chuyển về chế độ thời gian thực!');
             }
+
+            // Dàn Số Lót (Lấy từ 60 số N1)
+            const lotList = currentData.dan_lot || [];
+            const containerLot = document.getElementById('list-lot');
+            if (containerLot) {
+                containerLot.innerHTML = '';
+                lotList.forEach(itemStr => {
+                    const badge = document.createElement('span');
+                    badge.className = 'num-badge-blue';
+                    badge.textContent = itemStr;
+                    containerLot.appendChild(badge);
+                });
+            }
+
+            // PHẦN 3: DÀN SỐ N1, N2, N3
+            renderDan(currentData.dan_n1, 'dan-n1');
+            renderDan(currentData.dan_n2, 'dan-n2');
+            renderDan(currentData.dan_n3, 'dan-n3');
+            renderDan(currentData.dan_n1, 'list-n1');
+            renderDan(currentData.dan_n2, 'list-n2');
+            renderDan(currentData.dan_n3, 'list-n3');
+
+            // Cập nhật nhãn số lượng động cho N1, N2, N3
+            const n1Count = (currentData.dan_n1 || []).length;
+            const n2Count = (currentData.dan_n2 || []).length;
+            const n3Count = (currentData.dan_n3 || []).length;
+            const lblN1 = document.getElementById('lbl-dan-n1');
+            if (lblN1) lblN1.innerHTML = `<i class="fa-solid fa-circle"></i> 🟢 DÀN N1 (${n1Count} SỐ):`;
+            const lblN2 = document.getElementById('lbl-dan-n2');
+            if (lblN2) lblN2.innerHTML = `<i class="fa-solid fa-circle"></i> 🟡 DÀN N2 (${n2Count} SỐ - MỞ RỘNG CỨU N1):`;
+            const lblN3 = document.getElementById('lbl-dan-n3');
+            if (lblN3) lblN3.innerHTML = `<i class="fa-solid fa-circle"></i> 🟠 DÀN N3 (${n3Count} SỐ - CƠ HỘI CUỐI):`;
+
+            // Chu kỳ 7 ngày
+            const wc = currentData.weekly_cycle || {};
+            const wcBadge = document.getElementById('weekly-cycle-badge');
+            if (wcBadge && wc.week) {
+                wcBadge.textContent = `${wc.week} • ${wc.model} (${wc.note || ''})`;
+            }
+
+            // KHUNG CHUYỂN CẦU NGÀY MỚI
+            const ft = currentData.frame_transition || {};
+            if (ft.status_badge) document.getElementById('badge-reset-status').textContent = ft.status_badge;
+            if (ft.last_result) document.getElementById('desc-last-result').textContent = ft.last_result;
+            if (ft.schedule_n1) document.getElementById('sched-n1').textContent = ft.schedule_n1;
+            if (ft.schedule_n2) document.getElementById('sched-n2').textContent = ft.schedule_n2;
+            if (ft.schedule_n3) document.getElementById('sched-n3').textContent = ft.schedule_n3;
         }
-        window.setMockStage = setMockStage;
 
         // BƯỚC 5: HÀM RENDER DÀN N1, N2, N3
         function renderDan(dan, containerId) {
@@ -2739,13 +2431,9 @@
 
         // BƯỚC 6: HÀM COPY DÀN SỐ CHO TẤT CẢ CÁC DÀN
         function copyDan(containerId) {
-            if (!isDanReady) {
-                showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                return;
-            }
             const container = document.getElementById(containerId);
             if (!container) return;
-            const items = Array.from(container.querySelectorAll('.num, span')).map(e => e.textContent.trim()).filter(x => x && !x.includes('Chưa có') && !x.includes('CHỜ'));
+            const items = Array.from(container.querySelectorAll('.num, span')).map(e => e.textContent.trim()).filter(x => x && !x.includes('Chưa có'));
             const text = items.length > 0 ? items.join(', ') : container.innerText.trim();
             if (!text) return;
             const title = containerId.toUpperCase().replace('-', ' ');
@@ -2844,25 +2532,17 @@
         }
 
         function setupCopyButtons() {
-            function safeCopy(text, successMsg) {
-                if (!isDanReady) {
-                    showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                    return;
-                }
-                copyText(text, successMsg);
-            }
-
             // Phần 2 (PC)
             const btnCopyTop1 = document.getElementById('btn-copy-top1');
             if (btnCopyTop1) {
-                btnCopyTop1.onclick = () => safeCopy(currentData.top_1 || '', 'Đã sao chép Top 1: ' + currentData.top_1);
+                btnCopyTop1.onclick = () => copyText(currentData.top_1 || '', 'Đã sao chép Top 1: ' + currentData.top_1);
             }
 
             const btnCopyTop4 = document.getElementById('btn-copy-top4');
             if (btnCopyTop4) {
                 btnCopyTop4.onclick = () => {
                     const text = (currentData.top_4 || []).join(', ');
-                    safeCopy(text, 'Đã sao chép Top 4: ' + text);
+                    copyText(text, 'Đã sao chép Top 4: ' + text);
                 };
             }
 
@@ -2871,7 +2551,7 @@
                 btnCopyTinhTuy.onclick = () => {
                     const list = currentData.dan_ngay_1_tinhtuy || currentData.dan_giao_thoa || [];
                     const text = list.join(', ');
-                    safeCopy(text, `Đã sao chép Dàn Tinh Túy Ngày 1 (${list.length} số)`);
+                    copyText(text, `Đã sao chép Dàn Tinh Túy Ngày 1 (${list.length} số)`);
                 };
             }
 
@@ -2879,7 +2559,7 @@
             if (btnCopyLot) {
                 btnCopyLot.onclick = () => {
                     const text = (currentData.dan_lot || []).join(', ');
-                    safeCopy(text, `Đã sao chép Dàn Số Lót N1 (${(currentData.dan_lot || []).length} số)`);
+                    copyText(text, `Đã sao chép Dàn Số Lót N1 (${(currentData.dan_lot || []).length} số)`);
                 };
             }
 
@@ -2888,7 +2568,7 @@
             if (btnCopyN1) {
                 btnCopyN1.onclick = () => {
                     const text = (currentData.dan_n1 || []).join(', ');
-                    safeCopy(text, `Đã sao chép Dàn N1 (${(currentData.dan_n1 || []).length} số)`);
+                    copyText(text, `Đã sao chép Dàn N1 (${(currentData.dan_n1 || []).length} số)`);
                 };
             }
 
@@ -2896,7 +2576,7 @@
             if (btnCopyN2) {
                 btnCopyN2.onclick = () => {
                     const text = (currentData.dan_n2 || []).join(', ');
-                    safeCopy(text, `Đã sao chép Dàn N2 (${(currentData.dan_n2 || []).length} số)`);
+                    copyText(text, `Đã sao chép Dàn N2 (${(currentData.dan_n2 || []).length} số)`);
                 };
             }
 
@@ -2904,7 +2584,7 @@
             if (btnCopyN3) {
                 btnCopyN3.onclick = () => {
                     const text = (currentData.dan_n3 || []).join(', ');
-                    safeCopy(text, `Đã sao chép Dàn N3 (${(currentData.dan_n3 || []).length} số)`);
+                    copyText(text, `Đã sao chép Dàn N3 (${(currentData.dan_n3 || []).length} số)`);
                 };
             }
 
@@ -2916,10 +2596,6 @@
 
             if (trigger && sheet) {
                 trigger.onclick = () => {
-                    if (!isDanReady) {
-                        showToast('⏳ Dàn số chưa mở! Vui lòng chờ có kết quả G5.6 để chốt dàn.');
-                        return;
-                    }
                     // Update dynamic labels in mobile sheet
                     const lblTop1 = document.getElementById('m-label-top1');
                     if (lblTop1) lblTop1.textContent = 'Số: ' + (currentData.top_1 || '--');

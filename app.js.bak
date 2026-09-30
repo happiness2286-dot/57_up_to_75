@@ -8,16 +8,6 @@
 const DEFAULT_DATA = {
     history: [
         {
-                "stt": 266,
-                "date": "Thứ tư ngày 30-09-2026",
-                "full_db": "95242",
-                "de": "42",
-                "g7_1": "17",
-                "g7_2": "63",
-                "g7_3": "60",
-                "g7_4": "90"
-        },
-        {
                 "stt": 265,
                 "date": "Thứ ba ngày 29-09-2026",
                 "full_db": "05651",
@@ -56,16 +46,19 @@ const DEFAULT_DATA = {
                 "g7_2": "49",
                 "g7_3": "22",
                 "g7_4": "45"
+        },
+        {
+                "stt": 261,
+                "date": "Thứ sáu ngày 25-09-2026",
+                "full_db": "34465",
+                "de": "65",
+                "g7_1": "74",
+                "g7_2": "64",
+                "g7_3": "48",
+                "g7_4": "50"
         }
 ],
     frame_history: [
-        {
-                "stt": 266,
-                "date_start": "Thứ tư ngày 30-09-2026",
-                "result": "TRÚNG N1 🎯",
-                "de_hit": "42",
-                "dan_n1": "01, 02, 03, 04, 05, 06, 07, 08, 09, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 24, 26, 28, 29, 31, 32, 34, 35, 37, 38, 42, 44, 51, 53, 55, 58, 59, 60, 61, 62, 63, 65, 67, 68, 69, 72, 73, 81, 82, 83, 84, 85, 87, 88, 91, 92, 95, 96, 97, 98, 99 (60 số)"
-        },
         {
                 "stt": 265,
                 "date_start": "Thứ ba ngày 29-09-2026",
@@ -93,6 +86,13 @@ const DEFAULT_DATA = {
                 "result": "TRÚNG N1 🎯",
                 "de_hit": "32",
                 "dan_n1": "01, 02, 03, 04, 05, 06, 08, 09, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 24, 26, 28, 29, 31, 32, 34, 35, 37, 38, 42, 44, 45, 51, 53, 55, 58, 59, 60, 61, 62, 63, 65, 67, 68, 69, 72, 80, 81, 82, 83, 84, 85, 87, 88, 91, 92, 95, 96, 97, 98, 99 (60 số)"
+        },
+        {
+                "stt": 261,
+                "date_start": "Thứ sáu ngày 25-09-2026",
+                "result": "TRÚNG N1 🎯",
+                "de_hit": "65",
+                "dan_n1": "01, 02, 03, 04, 05, 06, 07, 09, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 24, 26, 28, 29, 31, 32, 34, 35, 37, 38, 42, 44, 45, 51, 53, 55, 58, 59, 60, 61, 62, 63, 65, 67, 68, 69, 72, 80, 81, 82, 83, 84, 85, 87, 88, 91, 92, 95, 96, 97, 98, 99 (60 số)"
         }
 ],
     dan_nhip_vang: [
@@ -1221,63 +1221,3 @@ function showToast(msg) {
     toast.classList.remove('hidden');
     setTimeout(() => toast.classList.add('hidden'), 3000);
 }
-
-// =========================================================================
-// XSMB REAL-TIME G1->G5.6 DYNAMIC DÀN LOGIC & EXPORTS
-// (Điều khiển logic dàn động chỉ hiển thị sau khi xuất hiện G5.6)
-// =========================================================================
-let isDanReady = false;
-
-async function fetchData(stageOverride) {
-    // 1. Kiểm tra nếu có gọi từ mini app soi_cau_g1_g5_app.html
-    if (typeof window !== 'undefined' && typeof window.checkIsDanReady === 'function') {
-        const status = window.checkIsDanReady(window.currentData);
-        isDanReady = status.isReady;
-        window.isDanReady = isDanReady;
-        return window.currentData;
-    }
-
-    try {
-        const res = await fetch('ket_qua_soi_cau_g1_g5.json?t=' + Date.now());
-        if (res.ok) {
-            const data = await res.json();
-            const lp = data.live_prizes || {};
-            const g5 = lp.g5 || [];
-            const hasG5_6 = Boolean(
-                Array.isArray(g5) && g5.length >= 6 && g5[5] &&
-                String(g5[5]).trim().length >= 4 && !String(g5[5]).includes('•')
-            );
-            const isCompleted = Boolean(data.is_g5_finished || (data.filled_count >= 19));
-
-            const now = new Date();
-            const curMinutes = now.getHours() * 60 + now.getMinutes();
-
-            if (stageOverride === 'before_18h15' || curMinutes < 1095) {
-                isDanReady = false;
-            } else if (stageOverride === 'drawing_18h15_18h22' || (!hasG5_6 && curMinutes < 1104)) {
-                isDanReady = false;
-            } else if (hasG5_6 || isCompleted || stageOverride === 'after_g5_6') {
-                isDanReady = true;
-            } else if (curMinutes >= 1104 && curMinutes < 1140) {
-                console.warn("⚠️ [18H24 CẢNH BÁO]: Đã qua 18h24 nhưng chưa có đủ G5.6. Chốt dàn cứng với dữ liệu hiện có!");
-                isDanReady = true;
-            }
-
-            if (typeof window !== 'undefined') {
-                window.isDanReady = isDanReady;
-            }
-            return data;
-        }
-    } catch (err) {
-        console.warn('Lỗi khi fetch dữ liệu G1-G5:', err);
-    }
-    return null;
-}
-
-if (typeof window !== 'undefined') {
-    window.isDanReady = isDanReady;
-    if (!window.fetchData) {
-        window.fetchData = fetchData;
-    }
-}
-
