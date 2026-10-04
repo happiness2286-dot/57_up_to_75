@@ -43,6 +43,8 @@ except ImportError:
     import urllib.parse
     HAS_BS4 = False
 
+KETQUA16_SO_KQ_URL = "https://ketqua16.net/so-ket-qua"
+KETQUA16_LIVE_URL = "https://ketqua16.net/"
 MKETQUA_SO_KQ_URL = "https://mketqua.net/so-ket-qua"
 MKETQUA_LIVE_URL = "https://mketqua.net/"
 DEFAULT_CAP4_CSV = "dan_60_cap_4.csv"
@@ -195,9 +197,9 @@ def compute_ai_scores(all_draws, target_idx, unique_numbers_map=None):
 
 def fetch_mketqua_html(count=10, is_live=False):
     """
-    Lấy mã HTML các kỳ xổ số gần nhất từ mketqua.net.
+    Lấy mã HTML các kỳ xổ số gần nhất từ ketqua16.net (dự phòng mketqua.net).
     Khi is_live=True (hoặc trong khung giờ quay 18h10 - 18h38):
-    Ưu tiên lấy bảng trực tiếp từ trang chủ https://mketqua.net/ ghép với quá khứ từ so-ket-qua.
+    Ưu tiên lấy bảng trực tiếp từ trang chủ ghép với quá khứ từ so-ket-qua.
     """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -205,36 +207,46 @@ def fetch_mketqua_html(count=10, is_live=False):
     }
     table_tag = '<table class="table table-condensed kqcenter kqvertimarginw table-kq-border table-kq-hover-div table-bordered kqbackground table-kq-bold-border tb-phoi-border watermark table-striped" id="result_tab_mb">'
     
-    # 1. Lấy sổ kết quả cho các kỳ trước
+    # 1. Lấy sổ kết quả cho các kỳ trước (thử ketqua16.net trước, mketqua.net sau)
     so_kq_html = ""
-    if HAS_BS4:
-        try:
-            resp = requests.post(MKETQUA_SO_KQ_URL, data={'code': 'mb', 'count': str(count), 'dow': '7'}, headers=headers, timeout=12)
-            if resp.status_code == 200:
-                so_kq_html = resp.text
-        except Exception as e:
-            print(f"[!] Requests failed: {e}, chuyển sang urllib...")
-            
+    for url_endpoint in [KETQUA16_SO_KQ_URL, MKETQUA_SO_KQ_URL]:
+        if HAS_BS4:
+            try:
+                resp = requests.post(url_endpoint, data={'code': 'mb', 'count': str(count), 'dow': '7'}, headers=headers, timeout=10)
+                if resp.status_code == 200 and table_tag in resp.text:
+                    so_kq_html = resp.text
+                    break
+            except Exception:
+                pass
+                
+        if not so_kq_html:
+            try:
+                import urllib.request
+                import urllib.parse
+                data = urllib.parse.urlencode({'code': 'mb', 'count': str(count), 'dow': '7'}).encode('utf-8')
+                req = urllib.request.Request(url_endpoint, data=data, headers=headers)
+                with urllib.request.urlopen(req, timeout=10) as response:
+                    content = response.read().decode('utf-8')
+                    if table_tag in content:
+                        so_kq_html = content
+                        break
+            except Exception:
+                pass
+
     if not so_kq_html:
-        try:
-            import urllib.request
-            import urllib.parse
-            data = urllib.parse.urlencode({'code': 'mb', 'count': str(count), 'dow': '7'}).encode('utf-8')
-            req = urllib.request.Request(MKETQUA_SO_KQ_URL, data=data, headers=headers)
-            with urllib.request.urlopen(req, timeout=12) as response:
-                so_kq_html = response.read().decode('utf-8')
-        except Exception as e:
-            print(f"[!] Lỗi kết nối mketqua.net: {e}")
+        print("[!] Cảnh báo: Không thể tải sổ kết quả từ cả ketqua16.net và mketqua.net!")
 
     # 2. Nếu đang ở chế độ live: lấy trang chủ để bắt kỳ đang quay
     if is_live:
         home_html = ""
-        try:
-            resp_home = requests.get(MKETQUA_LIVE_URL, headers=headers, timeout=8)
-            if resp_home.status_code == 200 and table_tag in resp_home.text:
-                home_html = resp_home.text
-        except Exception as e:
-            print(f"[!] Không lấy được trang chủ mketqua: {e}")
+        for live_endpoint in [KETQUA16_LIVE_URL, MKETQUA_LIVE_URL]:
+            try:
+                resp_home = requests.get(live_endpoint, headers=headers, timeout=8)
+                if resp_home.status_code == 200 and table_tag in resp_home.text:
+                    home_html = resp_home.text
+                    break
+            except Exception:
+                pass
             
         if home_html and so_kq_html:
             h_blocks = home_html.split(table_tag)

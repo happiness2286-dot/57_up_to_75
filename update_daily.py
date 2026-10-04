@@ -387,6 +387,18 @@ if __name__ == '__main__':
         print("✅ Hoàn tất cập nhật và đồng bộ dữ liệu mới!")
     else:
         print("⚡ Dữ liệu hệ thống đã sẵn sàng.")
+
+    # Tự động đồng bộ Dàn Soi Cầu G1->G5
+    try:
+        if os.path.exists('soi_cau_g1_g5.py'):
+            print("\n" + "=" * 65)
+            print("  ĐANG ĐỒNG BỘ DÀN TINH TÚY G1->G5 (soi_cau_g1_g5.py)...")
+            print("=" * 65)
+            import soi_cau_g1_g5
+            soi_cau_g1_g5.run_pipeline(target_draw_idx=0, is_live=False)
+            print("✅ Đã hoàn tất đồng bộ Dàn Soi Cầu G1->G5!")
+    except Exception as e:
+        print(f"⚠️ Lưu ý khi đồng bộ soi_cau_g1_g5: {e}")
         
     # Auto push to GitHub on execution
     push_to_github()
