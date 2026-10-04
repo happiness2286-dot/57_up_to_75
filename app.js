@@ -409,13 +409,19 @@ function resolveActiveCycleFromHistory() {
         return;
     }
 
-    const testFrame24 = generateFrameDataForAnchor('2026-09-24');
-    if (!testFrame24.isFinished) {
-        activeAnchorDateIso = '2026-09-24';
-        nextCycleAnchorDateIso = '2026-09-25';
-    } else {
-        activeAnchorDateIso = testFrame24.nextAutoShiftAnchor;
-        nextCycleAnchorDateIso = addDays(activeAnchorDateIso, 1);
+    // Dò chu kỳ liên tục từ mốc 24/09/2026 theo cơ chế Auto-Shift chuẩn (GEMINI.md)
+    let currentAnchor = '2026-09-24';
+    let safetyCounter = 0;
+    while (safetyCounter < 100) {
+        safetyCounter++;
+        const testFrame = generateFrameDataForAnchor(currentAnchor);
+        if (!testFrame.isFinished) {
+            activeAnchorDateIso = currentAnchor;
+            nextCycleAnchorDateIso = addDays(currentAnchor, 1);
+            break;
+        } else {
+            currentAnchor = testFrame.nextAutoShiftAnchor;
+        }
     }
 }
 
@@ -678,10 +684,15 @@ function initTab2DatePicker() {
         });
     }
 
+    if (datePicker) {
+        datePicker.value = selectedAnchorDateIso;
+    }
+
     datePicker?.addEventListener('change', (e) => {
         const val = e.target.value;
         if (val) {
             selectedAnchorDateIso = val;
+            if (quickSelect) quickSelect.value = val;
             renderTab2(selectedAnchorDateIso);
             showToast(`Đang xem Khung 3 ngày mốc ${fmtVNShort(val)}`);
         }
@@ -691,6 +702,7 @@ function initTab2DatePicker() {
         const val = e.target.value;
         if (val) {
             selectedAnchorDateIso = val;
+            if (datePicker) datePicker.value = val;
             renderTab2(selectedAnchorDateIso);
             showToast(`Đang xem Khung 3 ngày mốc ${fmtVNShort(val)}`);
         }
@@ -698,6 +710,8 @@ function initTab2DatePicker() {
 
     resetBtn?.addEventListener('click', () => {
         selectedAnchorDateIso = activeAnchorDateIso;
+        if (datePicker) datePicker.value = selectedAnchorDateIso;
+        if (quickSelect) quickSelect.value = selectedAnchorDateIso;
         renderTab2(selectedAnchorDateIso);
         showToast(`Đã quay về Khung Đang Đánh (${fmtVNShort(activeAnchorDateIso)})!`);
     });
