@@ -1471,7 +1471,7 @@
             <div class="section-header" style="border-bottom: 1px solid rgba(251, 191, 36, 0.25); padding-bottom: 14px;">
                 <h2>
                     <i class="fa-solid fa-crown" style="color: #fbbf24; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));"></i> 
-                    PHẦN 0: BẢNG CHỐT DÀN TĨNH 4 CẤP (<span id="txt-tinh-date" style="color: #67e8f9;">25/09/2026</span>)
+                    PHẦN 0: BẢNG CHỐT DÀN TĨNH 4 CẤP (<span id="txt-tinh-date" style="color: #67e8f9;">Hôm nay</span>)
                 </h2>
                 <span class="tag-info" id="txt-tinh-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); font-weight: 700;">
                     <i class="fa-solid fa-circle-check"></i> ĐANG HIỆU LỰC (VÀO TIỀN TRƯỚC 18H15)
@@ -2167,7 +2167,7 @@
             }
 
             const txtDate = document.getElementById('txt-tinh-date');
-            if (txtDate) txtDate.textContent = dt.target_date || '27/09/2026';
+            if (txtDate) txtDate.textContent = dt.target_date || 'Hôm nay';
 
             const txtBadge = document.getElementById('txt-tinh-badge');
             if (txtBadge && dt.status_text) {

@@ -1017,6 +1017,17 @@ function runOptimizerEngine() {
     const metricFiltered = document.getElementById('metric-filtered');
     if (metricFiltered) metricFiltered.textContent = `${100 - validPool.length} Số`;
 
+    // Update Tab 1 Forecast Date Badges dynamically
+    if (globalData && globalData.history && globalData.history.length > 0) {
+        const lastRec = globalData.history[globalData.history.length - 1];
+        const m = lastRec.date.match(/(\d{2})-(\d{2})-(\d{4})/);
+        if (m) {
+            const nextIso = addDays(`${m[3]}-${m[2]}-${m[1]}`, 1);
+            setTxt('tab1-date-badge', `Cầu Mới: ${fmtVNShort(nextIso)}`);
+            setTxt('t1-preview-n1-date', fmtVNFull(nextIso));
+        }
+    }
+
     // Render Tab 1 Live Preview Grid
     renderTab1VisualGrid(currentOptimized60);
 }
