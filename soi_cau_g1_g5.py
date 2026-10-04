@@ -43,8 +43,6 @@ except ImportError:
     import urllib.parse
     HAS_BS4 = False
 
-KETQUA16_SO_KQ_URL = "https://ketqua16.net/so-ket-qua"
-KETQUA16_LIVE_URL = "https://ketqua16.net/"
 MKETQUA_SO_KQ_URL = "https://mketqua.net/so-ket-qua"
 MKETQUA_LIVE_URL = "https://mketqua.net/"
 DEFAULT_CAP4_CSV = "dan_60_cap_4.csv"
@@ -197,9 +195,9 @@ def compute_ai_scores(all_draws, target_idx, unique_numbers_map=None):
 
 def fetch_mketqua_html(count=10, is_live=False):
     """
-    Lấy mã HTML các kỳ xổ số gần nhất từ ketqua16.net (dự phòng mketqua.net).
+    Lấy mã HTML các kỳ xổ số gần nhất từ mketqua.net.
     Khi is_live=True (hoặc trong khung giờ quay 18h10 - 18h38):
-    Ưu tiên lấy bảng trực tiếp từ trang chủ ghép với quá khứ từ so-ket-qua.
+    Ưu tiên lấy bảng trực tiếp từ trang chủ https://mketqua.net/ ghép với quá khứ từ so-ket-qua.
     """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -207,46 +205,36 @@ def fetch_mketqua_html(count=10, is_live=False):
     }
     table_tag = '<table class="table table-condensed kqcenter kqvertimarginw table-kq-border table-kq-hover-div table-bordered kqbackground table-kq-bold-border tb-phoi-border watermark table-striped" id="result_tab_mb">'
     
-    # 1. Lấy sổ kết quả cho các kỳ trước (thử ketqua16.net trước, mketqua.net sau)
+    # 1. Lấy sổ kết quả cho các kỳ trước
     so_kq_html = ""
-    for url_endpoint in [KETQUA16_SO_KQ_URL, MKETQUA_SO_KQ_URL]:
-        if HAS_BS4:
-            try:
-                resp = requests.post(url_endpoint, data={'code': 'mb', 'count': str(count), 'dow': '7'}, headers=headers, timeout=10)
-                if resp.status_code == 200 and table_tag in resp.text:
-                    so_kq_html = resp.text
-                    break
-            except Exception:
-                pass
-                
-        if not so_kq_html:
-            try:
-                import urllib.request
-                import urllib.parse
-                data = urllib.parse.urlencode({'code': 'mb', 'count': str(count), 'dow': '7'}).encode('utf-8')
-                req = urllib.request.Request(url_endpoint, data=data, headers=headers)
-                with urllib.request.urlopen(req, timeout=10) as response:
-                    content = response.read().decode('utf-8')
-                    if table_tag in content:
-                        so_kq_html = content
-                        break
-            except Exception:
-                pass
-
+    if HAS_BS4:
+        try:
+            resp = requests.post(MKETQUA_SO_KQ_URL, data={'code': 'mb', 'count': str(count), 'dow': '7'}, headers=headers, timeout=12)
+            if resp.status_code == 200:
+                so_kq_html = resp.text
+        except Exception as e:
+            print(f"[!] Requests failed: {e}, chuyển sang urllib...")
+            
     if not so_kq_html:
-        print("[!] Cảnh báo: Không thể tải sổ kết quả từ cả ketqua16.net và mketqua.net!")
+        try:
+            import urllib.request
+            import urllib.parse
+            data = urllib.parse.urlencode({'code': 'mb', 'count': str(count), 'dow': '7'}).encode('utf-8')
+            req = urllib.request.Request(MKETQUA_SO_KQ_URL, data=data, headers=headers)
+            with urllib.request.urlopen(req, timeout=12) as response:
+                so_kq_html = response.read().decode('utf-8')
+        except Exception as e:
+            print(f"[!] Lỗi kết nối mketqua.net: {e}")
 
     # 2. Nếu đang ở chế độ live: lấy trang chủ để bắt kỳ đang quay
     if is_live:
         home_html = ""
-        for live_endpoint in [KETQUA16_LIVE_URL, MKETQUA_LIVE_URL]:
-            try:
-                resp_home = requests.get(live_endpoint, headers=headers, timeout=8)
-                if resp_home.status_code == 200 and table_tag in resp_home.text:
-                    home_html = resp_home.text
-                    break
-            except Exception:
-                pass
+        try:
+            resp_home = requests.get(MKETQUA_LIVE_URL, headers=headers, timeout=8)
+            if resp_home.status_code == 200 and table_tag in resp_home.text:
+                home_html = resp_home.text
+        except Exception as e:
+            print(f"[!] Không lấy được trang chủ mketqua: {e}")
             
         if home_html and so_kq_html:
             h_blocks = home_html.split(table_tag)
@@ -1029,6 +1017,9 @@ def run_pipeline(target_draw_idx=0, cap4_csv=DEFAULT_CAP4_CSV, custom_cap4=None,
         # Cơ chế 4B: Soi trực tiếp (Bạch thủ, Tứ thủ, Lót)
         ghi_lich_su_truc_tiep(target_draw['date'], actual_de, top_1, top_4_nums, dan_lot_list)
 
+        # Cơ chế 4C: Dàn Tinh Túy Ngày 1 (Theo dõi 60 ngày)
+        ghi_lich_su_tinh_tuy(target_draw['date'], actual_de, dan_ngay1_tinhtuy)
+
     return output_data
 
 def ghi_lich_su_khung(date_str, de_str, kq_status, frame_stt=None):
@@ -1171,6 +1162,82 @@ def ghi_lich_su_truc_tiep(date_str, de_str, top1_val, top4_list, lot_list):
             print(f"[*] Đã cập nhật lịch sử soi trực tiếp vào: {file_path}")
         except Exception as e:
             print(f"[!] Lỗi ghi lịch sử trực tiếp vào {file_path}: {e}")
+
+def ghi_lich_su_tinh_tuy(date_str, de_str, dan_tinhtuy_list):
+    """Ghi nhận lịch sử Dàn Tinh Túy Ngày 1 (Theo dõi khoảng 60 ngày)"""
+    for file_path in ['lich_su_phuong_phap.json', os.path.join('58_up_to_75', 'lich_su_phuong_phap.json')]:
+        if not os.path.exists(os.path.dirname(file_path) or '.'):
+            continue
+        try:
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            else:
+                data = {}
+            if 'dan_tinh_tuy_ngay_1' not in data:
+                data['dan_tinh_tuy_ngay_1'] = {"tong_quan": {}, "lich_su": []}
+
+            clean_date = date_str.split()[-1].replace('-', '/') if date_str else datetime.now().strftime('%d/%m/%Y')
+            de_clean = str(de_str).zfill(2)
+            is_hit = (de_clean in dan_tinhtuy_list) if dan_tinhtuy_list else False
+            count_nums = len(dan_tinhtuy_list) if dan_tinhtuy_list else 0
+
+            existing_idx = None
+            for idx, item in enumerate(data['dan_tinh_tuy_ngay_1'].get("lich_su", [])):
+                if item.get("ngay") == clean_date:
+                    existing_idx = idx
+                    break
+
+            entry = {
+                "stt": 1,
+                "ngay": clean_date,
+                "de": de_clean,
+                "so_luong": count_nums,
+                "ket_qua": "trung" if is_hit else "truot",
+                "ghi_chu": f"Trúng Đề {de_clean} ✅ (Dàn {count_nums} số)" if is_hit else f"Trượt Đề {de_clean} ❌ ({count_nums} số)"
+            }
+
+            if existing_idx is not None:
+                data['dan_tinh_tuy_ngay_1']["lich_su"][existing_idx] = entry
+            else:
+                data['dan_tinh_tuy_ngay_1']["lich_su"].insert(0, entry)
+
+            # Cập nhật số thứ tự STT chuẩn
+            tot = len(data['dan_tinh_tuy_ngay_1']["lich_su"])
+            for i, itm in enumerate(data['dan_tinh_tuy_ngay_1']["lich_su"]):
+                itm["stt"] = tot - i
+
+            # Giới hạn giữ 60 kỳ gần nhất
+            data['dan_tinh_tuy_ngay_1']["lich_su"] = data['dan_tinh_tuy_ngay_1']["lich_su"][:60]
+            tot = len(data['dan_tinh_tuy_ngay_1']["lich_su"])
+
+            c_trung = sum(1 for x in data['dan_tinh_tuy_ngay_1']["lich_su"] if x.get("ket_qua") == "trung")
+            c_truot = sum(1 for x in data['dan_tinh_tuy_ngay_1']["lich_su"] if x.get("ket_qua") == "truot")
+            avg_sz = round(sum(x.get("so_luong", 0) for x in data['dan_tinh_tuy_ngay_1']["lich_su"]) / tot, 1) if tot > 0 else 0
+
+            # Tính chuỗi thắng thông gần nhất
+            streak = 0
+            for item in data['dan_tinh_tuy_ngay_1']["lich_su"]:
+                if item.get("ket_qua") == "trung":
+                    streak += 1
+                else:
+                    break
+
+            data['dan_tinh_tuy_ngay_1']["tong_quan"] = {
+                "tong_ngay": tot,
+                "trung": c_trung,
+                "truot": c_truot,
+                "ty_le_trung": round(c_trung / tot * 100, 1) if tot > 0 else 0,
+                "ty_le_truot": round(c_truot / tot * 100, 1) if tot > 0 else 0,
+                "dan_tb": avg_sz,
+                "chuoi_thong": streak
+            }
+
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"[*] Đã cập nhật lịch sử Dàn Tinh Túy Ngày 1 vào: {file_path}")
+        except Exception as e:
+            print(f"[!] Lỗi ghi lịch sử Dàn Tinh Túy vào {file_path}: {e}")
 
 def push_live_update(filled, total, is_done=False, actual_de=None):
     """Đồng bộ nhanh kết quả giải mới nổ lên GitHub để mobile cập nhật"""
