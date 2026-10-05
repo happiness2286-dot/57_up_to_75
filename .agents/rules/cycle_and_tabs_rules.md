@@ -23,3 +23,8 @@
   2. HIT N2: Close current cycle, shift day after N2 from Tab 3 up to Tab 2.
   3. ALL 3 DAYS MISS: Auto-shift after N3 finishes with explicit notice: "Chu kỳ thất bại, chuyển sang chu kỳ kế tiếp".
 - If N1 misses: NEVER auto-shift. Tab 2 stays pinned.
+
+## 4. Dual-Engine Data Fetching Rules
+- **Priority 1**: API 383.im (`https://api.383.im/lottery/live.json`) ~50ms JSON.
+- **Immediate Fallback**: `xosodaiphat.com` (`/xsmb-xo-so-mien-bac.html` & `/xsmb-30-ngay.html`). Triggers immediately if API 383.im fails, times out (>3-4s), or returns incomplete data.
+- **Emergency Fallback (Tier 3)**: `ketqua16.net` / `mketqua.net` only used if both primary & secondary fail.
