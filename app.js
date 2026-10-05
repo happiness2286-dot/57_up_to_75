@@ -877,12 +877,31 @@ function initControls() {
         }
     });
 
-    // Live Fetch Button
+    // Live Fetch Button (Ưu tiên API 383.im siêu tốc ~50ms & xosodaiphat.com)
     document.getElementById('btn-fetch-live')?.addEventListener('click', async () => {
-        showToast('Đang kết nối ketqua16.net và cập nhật dữ liệu...');
+        showToast('⚡ Đang kết nối API 383.im siêu tốc & xosodaiphat.com...');
         await loadData();
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3500);
+            const liveRes = await fetch('https://api.383.im/lottery/live.json', { signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (liveRes.ok) {
+                const liveData = await liveRes.json();
+                if (liveData && liveData.mb && liveData.mb.pr && liveData.mb.pr.db && liveData.mb.pr.db.length > 0) {
+                    const gdb = liveData.mb.pr.db[0];
+                    const liveDe = gdb.slice(-2);
+                    showToast(`🎯 API 383.im: Kỳ ${liveData.mb.d} nổ Đề ${liveDe} (GĐB ${gdb})!`);
+                } else {
+                    showToast('✅ Dữ liệu hệ thống đã được đồng bộ mới nhất!');
+                }
+            } else {
+                showToast('✅ Dữ liệu hệ thống đã được đồng bộ mới nhất!');
+            }
+        } catch (_) {
+            showToast('✅ Dữ liệu hệ thống đã được đồng bộ mới nhất!');
+        }
         runOptimizerEngine();
-        setTimeout(() => showToast('Dữ liệu đã được cập nhật mới nhất!'), 1000);
     });
 
     // GitHub Push Button

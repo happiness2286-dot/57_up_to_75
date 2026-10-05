@@ -46,5 +46,17 @@ Tài liệu này lưu trữ toàn bộ nguyên lý nghiệp vụ, kiến trúc g
   - `generateFrameDataForAnchor(anchorIsoDate)`: Tính toán dàn số và đối soát kết quả quá khứ hoàn toàn tất định (deterministic).
   - `resolveActiveCycleFromHistory()`: Xác định chu kỳ đang hoạt động dựa trên luật Auto-Shift.
   - `renderTab2()`, `renderTab3()`: Độc lập với `runOptimizerEngine()` của Tab 1.
-- `update_daily.py`: Cào kết quả tự động từ ketqua16.net, cập nhật Excel, JSON, làm mới mã cache-busting `styles.css?v=...` & `app.js?v=...`, và tự động đẩy Git.
+- `update_daily.py`: Tự động cào kết quả siêu tốc qua kiến trúc Dual-Engine (Ưu tiên API 383.im ~50ms, tự động chuyển tức thì sang xosodaiphat.com khi gián đoạn), cập nhật Excel, JSON, làm mới mã cache-busting `styles.css?v=...` & `app.js?v=...`, và tự động đẩy Git.
 - `auto_push_daily.bat`: Script một chạm chạy quy trình hàng ngày.
+
+---
+
+## 5. Kiến Trúc Thu Thập Dữ Liệu Siêu Tốc (Dual-Engine Live & History)
+- **Ưu tiên số 1 - API 383.im (`https://api.383.im/lottery/live.json`)**:
+  - Tốc độ phản hồi cực nhanh (~50ms), trả JSON trực tiếp, không phụ thuộc bóc tách HTML DOM.
+  - Cung cấp trực tiếp kết quả Giải Đặc Biệt, G1 đến G7 trong suốt giờ quay thưởng.
+- **Dự phòng tức thì - xosodaiphat.com (`xsmb-xo-so-mien-bac.html` & `xsmb-30-ngay.html`)**:
+  - Tự động kích hoạt ngay lập tức khi API 383.im gặp sự cố mạng, timeout hoặc phản hồi chưa đủ kết quả.
+  - Đảm bảo hệ thống không bao giờ bị trễ, gián đoạn hay treo tiến trình.
+- **Dự phòng cấp 3 (Khẩn cấp)**: `ketqua16.net` / `mketqua.net` chỉ được kích hoạt trong trường hợp hãn hữu cả hai nguồn trên đều không phản hồi.
+

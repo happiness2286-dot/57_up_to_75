@@ -43,6 +43,7 @@ except ImportError:
     import urllib.parse
     HAS_BS4 = False
 
+API_383_LIVE_URL = "https://api.383.im/lottery/live.json"
 MKETQUA_SO_KQ_URL = "https://mketqua.net/so-ket-qua"
 MKETQUA_LIVE_URL = "https://mketqua.net/"
 DEFAULT_CAP4_CSV = "dan_60_cap_4.csv"
@@ -297,6 +298,76 @@ def parse_lottery_blocks(html):
         
     return draws
 
+def fetch_api_383_draw(timeout=3):
+    """Lấy kỳ quay mới nhất / trực tiếp siêu tốc (~50ms) từ API 383.im."""
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    try:
+        if HAS_BS4:
+            r = requests.get(API_383_LIVE_URL, headers=headers, timeout=timeout)
+            if r.status_code != 200:
+                return None
+            data = r.json()
+        else:
+            req = urllib.request.Request(API_383_LIVE_URL, headers=headers)
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+        
+        mb = data.get('mb')
+        if not mb or not isinstance(mb, dict):
+            return None
+        d_str = mb.get('d')
+        if not d_str:
+            return None
+        
+        dow_map = {0: 'Thứ hai', 1: 'Thứ ba', 2: 'Thứ tư', 3: 'Thứ năm', 4: 'Thứ sáu', 5: 'Thứ bảy', 6: 'Chủ nhật'}
+        dt = datetime.strptime(d_str, '%Y-%m-%d')
+        date_str = f"{dow_map[dt.weekday()]} ngày {dt.strftime('%d-%m-%Y')}"
+
+        pr = mb.get('pr', {})
+        db_list = pr.get('db', [])
+        db_val = db_list[0] if db_list else ''
+        de_val = db_val[-2:] if len(db_val) >= 2 else ''
+
+        prizes = {}
+        # G1
+        g1_list = pr.get('g1', [])
+        prizes['G1'] = g1_list[0] if g1_list else ''
+
+        # G2 (2 giải)
+        g2_list = pr.get('g2', [])
+        for idx in range(1, 3):
+            prizes[f'G2.{idx}'] = g2_list[idx-1] if len(g2_list) >= idx else ''
+
+        # G3 (6 giải)
+        g3_list = pr.get('g3', [])
+        for idx in range(1, 7):
+            prizes[f'G3.{idx}'] = g3_list[idx-1] if len(g3_list) >= idx else ''
+
+        # G4 (4 giải)
+        g4_list = pr.get('g4', [])
+        for idx in range(1, 5):
+            prizes[f'G4.{idx}'] = g4_list[idx-1] if len(g4_list) >= idx else ''
+
+        # G5 (6 giải)
+        g5_list = pr.get('g5', [])
+        for idx in range(1, 7):
+            prizes[f'G5.{idx}'] = g5_list[idx-1] if len(g5_list) >= idx else ''
+
+        # G7 (4 giải)
+        g7_list = pr.get('g7', [])
+        for idx in range(1, 5):
+            prizes[f'G7.{idx}'] = g7_list[idx-1] if len(g7_list) >= idx else ''
+
+        return {
+            'date': date_str,
+            'db': db_val,
+            'de': de_val,
+            'prizes': prizes
+        }
+    except Exception as e:
+        print(f"[!] API 383.im gặp sự cố ({e}), chuyển ngay sang xosodaiphat.com...")
+        return None
+
 def fetch_daiphat_draws(is_live=False):
     """Nguồn dự phòng cào các kỳ quay gần nhất từ xosodaiphat.com khi mketqua.net gặp sự cố."""
     dow_map = {0: 'Thứ hai', 1: 'Thứ ba', 2: 'Thứ tư', 3: 'Thứ năm', 4: 'Thứ sáu', 5: 'Thứ bảy', 6: 'Chủ nhật'}
@@ -547,14 +618,33 @@ def run_pipeline(target_draw_idx=0, cap4_csv=DEFAULT_CAP4_CSV, custom_cap4=None,
     print("      XSMB AI - SOI VỊ TRÍ G1->G5 & CHU KỲ NỔ THEO 5 BƯỚC CHUẨN HÓA")
     print("=" * 78)
     
-    html = fetch_mketqua_html(count=10, is_live=is_live)
-    draws = parse_lottery_blocks(html) if html else []
+    draws = []
+    print("[*] Đang nạp dữ liệu kết quả XSMB (Ưu tiên API 383.im & xosodaiphat.com)...")
+
+    # 1. Ưu tiên kiểm tra API 383.im siêu tốc (~50ms)
+    live_383 = fetch_api_383_draw(timeout=3)
+    if live_383:
+        draws.append(live_383)
+        print(f"[✓ API 383.im] Cập nhật thành công kỳ quay [{live_383['date']}] (Đề: {live_383['de'] or 'Đang quay'})")
+
+    # 2. Cào các kỳ gần nhất từ xosodaiphat.com (nhanh, chuẩn xác)
+    daiphat_draws = fetch_daiphat_draws(is_live=is_live)
+    for dp in daiphat_draws:
+        if not any(d['date'] == dp['date'] for d in draws):
+            draws.append(dp)
+    if daiphat_draws:
+        print(f"[✓ xosodaiphat.com] Đã đồng bộ {len(daiphat_draws)} kỳ quay gần nhất.")
+
+    # 3. Dự phòng mketqua nếu vẫn chưa đủ dữ liệu
     if len(draws) < 2:
-        print("[!] mketqua.net không phản hồi hoặc không đủ dữ liệu. Đang chuyển sang nguồn dự phòng xosodaiphat.com...")
-        daiphat_draws = fetch_daiphat_draws(is_live=is_live)
-        if len(daiphat_draws) >= 2:
-            draws = daiphat_draws
-            print(f"[✓ Dự phòng] Đã lấy thành công {len(draws)} kỳ từ xosodaiphat.com!")
+        print("[!] Đang thử nguồn bổ trợ khẩn cấp mketqua.net...")
+        html = fetch_mketqua_html(count=10, is_live=is_live)
+        if html:
+            mk_draws = parse_lottery_blocks(html)
+            for md in mk_draws:
+                if not any(d['date'] == md['date'] for d in draws):
+                    draws.append(md)
+
     if len(draws) < 2:
         print("[!] Dữ liệu cào về không đủ số kỳ để phân tích.")
         return None

@@ -415,6 +415,8 @@ def push_to_github():
     print("  ĐANG KIỂM TRA THAY ĐỔI VÀ TUẦN TỰ PUSH LÊN GITHUB...")
     print("-" * 65)
     try:
+        # Tự động đồng bộ commit từ remote trước khi push
+        subprocess.run(["git", "pull", "--no-rebase", "origin", "main", "-X", "ours"], capture_output=True, text=True)
         subprocess.run(["git", "add", "."], check=True)
         diff_res = subprocess.run(["git", "diff", "--cached", "--quiet"])
         if diff_res.returncode != 0:
