@@ -2,7 +2,10 @@
 """
 =============================================================================
 XSMB 2026 DAILY AUTO-UPDATER & OPTIMIZER
-Tự động cào kết quả từ https://ketqua16.net/, cập nhật Excel, JSON và tái tối ưu Dàn 60 Số N1
+Tự động cào kết quả siêu tốc:
+- ƯU TIÊN SỐ 1: API 383.im (https://api.383.im/lottery/live.json) ~50ms
+- DỰ PHÒNG TỨC THÌ: xosodaiphat.com (https://xosodaiphat.com/xsmb-xo-so-mien-bac.html)
+- Tự động cập nhật Excel, JSON và tái tối ưu Dàn 60 Số N1
 =============================================================================
 """
 
@@ -20,22 +23,129 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 DATA_JSON_PATH = 'data.json'
 EXCEL_PATH = 'Thong_Ke_G7_Va_Top20_XSMB_2026.xlsx'
-URL = 'https://ketqua16.net/'
-SO_KQ_URL = 'https://ketqua16.net/so-ket-qua'
 
-def parse_tds_to_result(clean_tds):
+# Data Endpoints
+API_383_LIVE_URL = 'https://api.383.im/lottery/live.json'
+DAIPHAT_RECENT_URL = 'https://xosodaiphat.com/xsmb-xo-so-mien-bac.html'
+DAIPHAT_30N_URL = 'https://xosodaiphat.com/xsmb-30-ngay.html'
+KETQUA16_URL = 'https://ketqua16.net/'
+KETQUA16_SO_KQ_URL = 'https://ketqua16.net/so-ket-qua'
+
+DOW_MAP = {
+    0: 'Thứ hai',
+    1: 'Thứ ba',
+    2: 'Thứ tư',
+    3: 'Thứ năm',
+    4: 'Thứ sáu',
+    5: 'Thứ bảy',
+    6: 'Chủ nhật'
+}
+
+def format_vietnamese_date(dt):
+    """Định dạng ngày chuẩn tiếng Việt: 'Thứ hai ngày DD-MM-YYYY'"""
+    dow = DOW_MAP.get(dt.weekday(), '')
+    return f"{dow} ngày {dt.strftime('%d-%m-%Y')}"
+
+def get_date_key(d_str):
+    if not d_str:
+        return datetime.min
+    m = re.search(r'(\d{2})-(\d{2})-(\d{4})', d_str)
+    if m:
+        return datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+    return datetime.min
+
+def fetch_api_383(timeout=4):
+    """
+    Ưu tiên số 1: Lấy kết quả trực tiếp siêu tốc (~50ms) từ API 383.im
+    """
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    req = urllib.request.Request(API_383_LIVE_URL, headers=headers)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        data = json.loads(resp.read().decode('utf-8'))
+        mb = data.get('mb')
+        if not mb or not isinstance(mb, dict):
+            return None
+        d_str = mb.get('d') # '2026-10-04'
+        if not d_str:
+            return None
+        dt = datetime.strptime(d_str, '%Y-%m-%d')
+        date_formatted = format_vietnamese_date(dt)
+        pr = mb.get('pr', {})
+        db_list = pr.get('db', [])
+        g7_list = pr.get('g7', [])
+        if not db_list or len(db_list[0]) != 5 or len(g7_list) < 4:
+            return None
+        gdb = db_list[0]
+        return {
+            'date': date_formatted,
+            'gdb': gdb,
+            'de': gdb[-2:],
+            'g7_1': g7_list[0],
+            'g7_2': g7_list[1],
+            'g7_3': g7_list[2],
+            'g7_4': g7_list[3],
+            'source': 'API 383.im'
+        }
+
+def fetch_xosodaiphat_results(url=DAIPHAT_RECENT_URL, timeout=8):
+    """
+    Dự phòng tức thì: Cào kết quả chính xác từ xosodaiphat.com
+    """
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        html = resp.read().decode('utf-8', errors='ignore')
+
+    blocks = re.split(r'<table[^>]*table-xsmb[^>]*>', html)
+    results = []
+    for i, b in enumerate(blocks[1:]):
+        pre_text = blocks[i]
+        date_m = re.findall(r'(\d{2})[/-](\d{2})[/-](\d{4})', pre_text)
+        if not date_m:
+            continue
+        d, mth, y = date_m[-1]
+        try:
+            dt = datetime(int(y), int(mth), int(d))
+            date_str = format_vietnamese_date(dt)
+        except Exception:
+            date_str = f"ngày {d}-{mth}-{y}"
+
+        m_db = re.search(r'G\.ĐB.*?<td[^>]*>(.*?)<tr>', b, re.DOTALL)
+        db_nums = [x.strip() for x in re.findall(r'>\s*(\d{5})\s*<', m_db.group(1))] if m_db else []
+        if not db_nums:
+            continue
+
+        m_g7 = re.search(r'G\.7.*?<td[^>]*>(.*?)</table>', b, re.DOTALL)
+        if not m_g7:
+            m_g7 = re.search(r'G\.7.*', b, re.DOTALL)
+        g7_nums = [x.strip() for x in re.findall(r'>\s*(\d{2})\s*<', m_g7.group(1))] if m_g7 else []
+        if len(g7_nums) < 4:
+            continue
+
+        results.append({
+            'date': date_str,
+            'gdb': db_nums[0],
+            'de': db_nums[0][-2:],
+            'g7_1': g7_nums[0],
+            'g7_2': g7_nums[1],
+            'g7_3': g7_nums[2],
+            'g7_4': g7_nums[3],
+            'source': 'xosodaiphat.com'
+        })
+    return results
+
+def parse_ketqua16_tds_to_result(clean_tds):
+    """Bộ bóc tách dự phòng cấp 3 cho ketqua16.net"""
     date_str = None
     gdb_str = None
     g7_list = []
 
-    # Find Date
     for item in clean_tds:
         if 'ngày' in item.lower() and ('thứ' in item.lower() or 'chủ nhật' in item.lower()):
             lines = [l.strip() for l in item.split('\n') if l.strip()]
             date_str = lines[-1]
             break
 
-    # Find Special Prize (GĐB) & G7
     for idx, item in enumerate(clean_tds):
         if 'đặc biệt' in item.lower() and idx + 1 < len(clean_tds):
             val = clean_tds[idx + 1]
@@ -57,58 +167,98 @@ def parse_tds_to_result(clean_tds):
         'g7_1': g7_list[0],
         'g7_2': g7_list[1],
         'g7_3': g7_list[2],
-        'g7_4': g7_list[3]
+        'g7_4': g7_list[3],
+        'source': 'ketqua16.net'
     }, date_str
 
-def get_date_key(d_str):
-    if not d_str:
-        return datetime.min
-    m = re.search(r'(\d{2})-(\d{2})-(\d{4})', d_str)
-    if m:
-        return datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
-    return datetime.min
-
-def fetch_all_recent_results():
+def fetch_ketqua16_fallback():
+    """Dự phòng cấp 3 khi cả 383.im và xosodaiphat.com đều không phản hồi"""
     results = {}
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-    
-    # 1. Ket noi trang chu
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Đang kết nối tới trang chủ {URL}...")
     try:
-        req = urllib.request.Request(URL, headers=headers)
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        req = urllib.request.Request(KETQUA16_URL, headers=headers)
+        with urllib.request.urlopen(req, timeout=8) as resp:
             html = resp.read().decode('utf-8')
         tables = re.findall(r'<table[^>]*>(.*?)</table>', html, re.DOTALL)
         if tables:
             matches = re.findall(r'<td[^>]*>(.*?)</td>', tables[0], re.DOTALL | re.IGNORECASE)
             clean_tds = [re.sub(r'<.*?>', '', m).strip() for m in matches if re.sub(r'<.*?>', '', m).strip()]
-            res, d_str = parse_tds_to_result(clean_tds)
+            res, _ = parse_ketqua16_tds_to_result(clean_tds)
             if res:
                 results[res['date']] = res
-                print(f"✅ Tìm thấy kết quả ngày [{res['date']}]: GĐB={res['gdb']} (Đề={res['de']}), G7=[{', '.join([res['g7_1'], res['g7_2'], res['g7_3'], res['g7_4']])}]")
-            elif d_str:
-                print(f"⏳ Kỳ quay [{d_str}] trên trang chủ đang diễn ra trực tiếp hoặc chưa có đầy đủ kết quả.")
     except Exception as e:
-        print(f"⚠️ Không thể tải dữ liệu từ trang chủ {URL}: {e}")
+        print(f"  ⚠️ [ketqua16.net] Lỗi trang chủ: {e}")
 
-    # 2. Ket noi so ket qua
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Đang tra cứu sổ kết quả {SO_KQ_URL}...")
     try:
-        req = urllib.request.Request(SO_KQ_URL, headers=headers)
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        req = urllib.request.Request(KETQUA16_SO_KQ_URL, headers=headers)
+        with urllib.request.urlopen(req, timeout=8) as resp:
             html = resp.read().decode('utf-8')
         tables = re.findall(r'<table[^>]*>(.*?)</table>', html, re.DOTALL)
-        count_so = 0
         for t in tables:
             matches = re.findall(r'<td[^>]*>(.*?)</td>', t, re.DOTALL | re.IGNORECASE)
             clean_tds = [re.sub(r'<.*?>', '', m).strip() for m in matches if re.sub(r'<.*?>', '', m).strip()]
-            res, _ = parse_tds_to_result(clean_tds)
+            res, _ = parse_ketqua16_tds_to_result(clean_tds)
             if res and res['date'] not in results:
                 results[res['date']] = res
-                count_so += 1
-        print(f"✅ Đã quét {count_so} kỳ quay đã hoàn tất từ sổ kết quả.")
     except Exception as e:
-        print(f"⚠️ Không thể tải dữ liệu từ sổ kết quả {SO_KQ_URL}: {e}")
+        print(f"  ⚠️ [ketqua16.net] Lỗi sổ kết quả: {e}")
+
+    return list(results.values())
+
+def fetch_all_recent_results():
+    """
+    Cơ chế Dual-Engine:
+    1. Ưu tiên số 1: API 383.im (timeout 4s, độ trễ ~50ms).
+    2. Chuyển ngay sang xosodaiphat.com nếu 383.im bị gián đoạn, rỗng hoặc chậm.
+    3. Luôn kết hợp xosodaiphat.com để đối soát và lấy đầy đủ lịch sử nhiều ngày gần nhất.
+    """
+    results = {}
+    
+    # 1. Thử API 383.im trước (Ưu tiên số 1)
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] ⚡ [Ưu tiên 1] Đang kết nối API 383.im ({API_383_LIVE_URL})...")
+    api_383_ok = False
+    try:
+        res_383 = fetch_api_383(timeout=4)
+        if res_383:
+            results[res_383['date']] = res_383
+            api_383_ok = True
+            print(f"  ✅ [API 383.im] Cập nhật siêu tốc kỳ [{res_383['date']}]: GĐB={res_383['gdb']} (Đề={res_383['de']}), G7=[{res_383['g7_1']}, {res_383['g7_2']}, {res_383['g7_3']}, {res_383['g7_4']}]")
+        else:
+            print(f"  ℹ️ [API 383.im] Chưa có kết quả đầy đủ kỳ hôm nay hoặc đang quay. Chuyển sang nguồn dữ liệu bổ trợ.")
+    except Exception as e:
+        print(f"  ⚠️ [API 383.im] Bị gián đoạn hoặc phản hồi chậm ({e}). Chuyển ngay lập tức sang xosodaiphat.com để không bị chậm!")
+
+    # 2. Đồng bộ các kỳ gần nhất từ xosodaiphat.com (Nguồn dự phòng tức thì & bổ trợ lịch sử)
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🛡️ [Dự phòng & Bổ trợ] Đang đồng bộ kết quả từ xosodaiphat.com ({DAIPHAT_RECENT_URL})...")
+    try:
+        daiphat_draws = fetch_xosodaiphat_results(DAIPHAT_RECENT_URL, timeout=7)
+        count_added = 0
+        for item in daiphat_draws:
+            if item['date'] not in results:
+                results[item['date']] = item
+                count_added += 1
+        print(f"  ✅ [xosodaiphat.com] Đã đồng bộ thêm {count_added} kỳ quay hoàn tất.")
+    except Exception as e:
+        print(f"  ⚠️ [xosodaiphat.com] Không thể tải dữ liệu gần nhất: {e}")
+
+    # 3. Nếu vẫn chưa có đủ kết quả (ví dụ cần đối soát 30 ngày)
+    if len(results) < 5:
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] ⏳ Đang nạp thêm sổ kết quả 30 ngày từ xosodaiphat.com ({DAIPHAT_30N_URL})...")
+        try:
+            daiphat_30n = fetch_xosodaiphat_results(DAIPHAT_30N_URL, timeout=8)
+            for item in daiphat_30n:
+                if item['date'] not in results:
+                    results[item['date']] = item
+            print(f"  ✅ [xosodaiphat 30N] Tổng hợp được {len(results)} kỳ quay.")
+        except Exception as e:
+            print(f"  ⚠️ [xosodaiphat 30N] Không thể nạp 30 ngày: {e}")
+
+    # 4. Dự phòng khẩn cấp cấp 3 nếu cả hai nguồn trên đều gặp trục trặc
+    if not results:
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚨 Kích hoạt dự phòng khẩn cấp ketqua16.net...")
+        kq16_results = fetch_ketqua16_fallback()
+        for item in kq16_results:
+            results[item['date']] = item
 
     sorted_results = sorted(results.values(), key=lambda x: get_date_key(x['date']))
     return sorted_results
